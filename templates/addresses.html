@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+<title>My account</title>
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+<div class="row">
+    <div class="col-sm-10">
+        <ul class="mr-auto">
+
+            <h1> Your Addresses </h1>
+            <hr width="%500">
+            {% for a in addresses %}
+                <a class="align-middle" style="font-size:20px;"> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} 
+                </a>
+                <a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">
+                        <i class="fas fa-times" class="align-middle"></i>
+                </a>
+                <button class="btn-sm btn-link" form="change_form" name="delete" value="Submit">
+                    <i class="fas fa-times" style='color: red;'></i>
+                </button>            
+            <hr width="%500">
+            {% endfor %}
+            <a href="{% url 'add_address' %}" class="btn">Add a Shipping Address</a>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base_accounts.html' %}
+
+<title>Log in to K1001 Shop</title>
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-4 col-md-6 col-sm-8">
+      <div class="card">
+        <div class="card-body" style="background-image: url('C:\Users\90555\Desktop\Development\django_learn\myproject\static\img\moroccan-flower-dark.png');>
+          <h3 class="card-title">Log in</h3>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% include 'includes/form.html' %}
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+          </form>
+        </div>
+        <div class="card-footer text-muted text-center">
+          Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+        </div>
+      </div>
+      <div class="text-center py-2">
+        <small>
+          <a href="{% url 'password_reset' %}" class="text-muted">Forgot your password?</a>
+        </small>
+      </div>
+    </div>
+  </div>
+{% endblock %}

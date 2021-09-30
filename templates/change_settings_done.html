@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+<title>My account</title>
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+  <div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+      <h1> Settings have been successfully changed. </h1>
+      <a href="{% url 'home' %}" class="btn">Return to home</a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include "includes/navbar.html" %}
+
+  <!--Main layout-->
+  <main class="mt-5 pt-4">
+    <div class="container dark-grey-text mt-5">
+
+      <!--Grid row-->
+      <div class="row wow fadeIn">
+
+        <!--Grid column-->
+        <div class="col-md-6 mb-4" style="width: 350px; height: 350px" >
+
+          <img style="height: 100%; width: 100%; object-fit: contain" src="{{ object.image.url }}" class="img-fluid" alt="">
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-md-6 mb-4">
+
+          <!--Content-->
+          <div class="p-4">
+            <h3> {{ object.name }} </h3>
+            <div class="mb-3">
+              <a href="">
+                <span class="badge purple mr-1"> {{ object.category.title }}</span>
+              </a>
+              {% comment %}
+              <a href="">
+                <span class="badge blue mr-1">New</span>
+              </a>
+              <a href="">
+                <span class="badge red mr-1">Bestseller</span>
+              </a>
+              {% endcomment %}
+            </div>
+
+            <p class="lead">
+              {% if object.discount_price %}
+              <span class="mr-1">
+                <del>₺{{ object.price }}</del>
+              </span>
+              <span>₺{{ object.discount_price }}</span>
+              {% else %}
+              <span>₺{{ object.price }}</span>
+              {% endif %}
+            </p>
+            {% if object.stock %}
+              <p> In Stock: {{ object.stock }}</p>
+
+              {% if user.is_authenticated %}
+                <form class="d-flex justify-content-left" method='post' novalidate>
+                  <!-- Default input -->
+                  {% csrf_token %}
+                  <input type="number" min="1" name="quantity" value="1" aria-label="Search" class="form-control" style="width: 100px">
+                  <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                    <i class="fas fa-shopping-cart ml-1"></i>
+                  </button>
+                </form>
+              {% else %}
+              <a> Log in to add to cart. </a>
+              {% endif %}
+            {% else %}
+            <h5> Item not in stock. </h5>
+            {% endif %}
+
+          </div>
+          <!--Content-->
+
+        </div>
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+      <hr>
+
+      <!--Grid row-->
+      <div class="row d-flex justify-content-center wow fadeIn">
+
+        <!--Grid column-->
+        <!--Grid column-->
+
+      </div>
+
+      <!-- Tabs navs -->
+
+      <!-- Tabs content -->
+
+      <nav>
+        <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Description</a>
+          <a class="nav-item nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+          <div class="row d-flex justify-content-center wow fadeIn">
+
+          <!--Grid column-->
+          <div class="col-md-6 text-center">
+
+            <h4 class="my-4 h4">Description</h4>
+
+            <p>{{ object.description }}</p>
+
+          </div>
+          <!--Grid column-->
+
+        </div>
+        <!-- .. -->
+        </div>
+        <div class="tab-pane fade" id="nav-reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">Reviews Here</div>
+      </div>
+
+      <!--Grid row-->
+      <div class="row wow fadeIn">
+
+        <!--Grid column-->
+        <div class="col-lg-4 col-md-12 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-lg-4 col-md-6 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/12.jpg" class="img-fluid" alt="">
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-lg-4 col-md-6 mb-4">
+
+          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/13.jpg" class="img-fluid" alt="">
+
+        </div>
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+    </div>
+
+  </main>
+
+  <!--Main layout-->
+{% endblock content %}
+

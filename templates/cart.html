@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+</main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Item Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order_item in order.items.all %}
+        <tr>
+            <td>                        
+ 
+                <div class="text-center">
+                    <h4>
+                    <strong>
+                        <a href="{{ order_item.item.get_absolute_url }}" class="dark-grey-text">{{ order_item.item.name }}
+                        </a>
+                    </strong>
+                    </h4>
+                    {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
+                    <a href="{{ order_item.item.get_absolute_url }}">
+                    <img class="rounded" style="width: 150px; height: 150px" href="{{ order_item.item.get_absolute_url }}" src="{{ order_item.item.image.url }}" class="card-img-top">                    
+                    </a>
+                    <p class="lead">
+                        {% if order_item.item.discount_price %}
+                        <span class="mr-1">
+                            <del>₺{{ order_item.item.price }}</del>
+                        </span>
+                        <span>₺{{ order_item.item.discount_price }}</span>
+                        {% else %}
+                        <span>₺{{ order_item.item.price }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+            </td>
+            <td>
+                <strong><label class="mb-2"> Current Quantity: {{ order_item.quantity }} </br> </label></strong>
+                <form id="change_form" class="d-flex justify-content-left form-inline" method='post' novalidate>
+                  <!-- Default input -->
+                    {% csrf_token %}
+                    
+                    <input type="hidden" name="product_id" value="{{ order_item.pk }}" />
+                    <input type="number" min="1" name="quantity" value="{{ order_item.quantity }}" aria-label="Search" class="form-control" style="width: 70px">
+                    <button class="btn btn-primary btn-md my-0 p" name="change" type="submit" value="Submit"> Change
+                    </button>
+                </form>
+                
+            </td>
+            <td>
+
+            <a class="h5">
+            {% if order_item.item.discount_price %}
+                <span class="mr-1">
+                    <del>₺{{ order_item.get_total_item_price }}</del>
+                </span>
+                <span>₺{{ order_item.get_total_discount_item_price }}</span>
+            {% else %}
+                <span>₺{{ order_item.get_total_item_price }}</span>
+            {% endif %}
+            </a>
+
+            
+            <button class="btn-sm btn-link float-right" form="change_form" name="delete" value="Submit">
+                    <i class="fas fa-trash float-right" style='color: red;'></i>
+            </button>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan='3'>Your cart is empty</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+            <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% comment %}
+        {% if object.coupon %}
+        <tr>
+            <td colspan="4"><b>Coupon</b></td>
+            <td><b>-₺{{ object.coupon.amount }}</b></td>
+        </tr>
+        {% endif %}
+        {% endcomment %}
+        {% if order.get_total %}
+        <tr>
+            <td colspan="2"><b>Order Total</b></td>
+            <td><b class="h5">₺{{ order.get_total }}</b></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+            <a class='btn btn-warning float-right ml-2' href='#'>Proceed to checkout</a>
+            <a class='btn btn-primary float-right' href='#'>Continue shopping</a>
+            </td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+{% endblock content %}
