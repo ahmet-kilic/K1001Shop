@@ -16,9 +16,7 @@
                 <a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">
                         <i class="fas fa-times" class="align-middle"></i>
                 </a>
-                <button class="btn-sm btn-link" form="change_form" name="delete" value="Submit">
-                    <i class="fas fa-times" style='color: red;'></i>
-                </button>            
+         
             <hr width="%500">
             {% endfor %}
             <a href="{% url 'add_address' %}" class="btn">Add a Shipping Address</a>

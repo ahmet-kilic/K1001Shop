@@ -49,31 +49,31 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("product", kwargs={ "slug": self.slug})    
 
-    # def get_rating(self):
-    #     rate_avg = Review.objects.filter(product=self).aggregate(average=Avg('rate'))
-    #     avg = 0
-    #     if rate_avg['average'] is not None:
-    #         avg = float(rate_avg['average'])
-    #     return avg
+    def get_rating(self):
+        rate_avg = Review.objects.filter(product=self).aggregate(average=Avg('rating'))
+        avg = 0
+        if rate_avg['average'] is not None:
+            avg = round(float(rate_avg['average']),1)
+        return avg
 
-    # def count_reviews(self):
-    #     counts = Review.objects.filter(product=self).aggregate(count=Count('id'))
-    #     count = 0
-    #     if counts['count'] is not None:
-    #         count = int(counts['count'])
-    #     return count
+    def count_reviews(self):
+        counts = Review.objects.filter(product=self).aggregate(count=Count('id'))
+        count = 0
+        if counts['count'] is not None:
+            count = int(counts['count'])
+        return count
 
-# class Review(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     subject = models.CharField(max_length=50, blank=True)
-#     comment = models.CharField(max_length=400, blank=True)
-#     rate = models.IntegerField(default=1)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=40, blank=True)
+    comment = models.CharField(max_length=400, blank=True)
+    rating = models.IntegerField(default=4)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-#     def __str__(self):
-#         return self.subject
+    def __str__(self):
+        return self.subject
 
 
 class Address(models.Model):

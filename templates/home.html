@@ -199,7 +199,7 @@
           {% for item in products %}
           <div class="col-lg-3 col-md-6 mb-4">
 
-            <div class="card" style="width: 250px; height: 300px">
+            <div class="card" style="width: 250px; height: 350px">
 
               <div class="view overlay">
                 {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
@@ -229,6 +229,7 @@
                   {% endif %}
                   </strong>
                 </h4>
+                <h5> <i class="fas fa-star" style="color:	orange"></i> {{ item.get_rating }} </h5>
 
               </div>
 

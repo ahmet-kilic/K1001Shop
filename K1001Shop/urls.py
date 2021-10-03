@@ -30,7 +30,6 @@ from accounts import views as accounts_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.HomeView.as_view(), name='home'),
-    path('about/', views.AboutView.as_view(), name='about'),
     path('contact/',views.ContactView.as_view(), name='contact'),
     path('product/<slug:slug>', views.ProductView.as_view(), name='product'),
     path('signup/',accounts_views.SignUpView.as_view(),name='signup'),

@@ -15,6 +15,10 @@
   <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
   <!-- Your custom styles (optional) -->
   <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="{% static 'css/rate.css' %}" rel="stylesheet">
+
   <style type="text/css">
     html,
     body,
@@ -66,12 +70,13 @@
 <body>
     {% block body %}
     {% include 'includes/message.html' %}
+    {% include 'includes/scripts.html' %}
 
     {% block content %}
     {% endblock content %}
 
     {% include 'includes/footer.html' %}
-    {% include 'includes/scripts.html' %}
+    
 
     {% endblock body %}
 </body>

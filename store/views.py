@@ -1,13 +1,15 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import View
-from .models import CartProduct, Category, Product, Address, Order
-from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm
+from .models import CartProduct, Category, Product, Address, Order, Review
+from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, ContactForm
 from cities_light.models import SubRegion
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.contrib import messages
+from django.http import HttpResponse
+from django.core.mail import send_mail, BadHeaderError
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -42,68 +44,104 @@ class HomeView(View):
 
         return render(request, 'home.html', context)
 
-class AboutView(View):
-    def get(self, request):
-        return render(request, 'about.html')
-
-class ContactView(View):
-    def get(self, request):
-        return render(request, 'contact.html')
 
 class ProductView(View):
     def get(self, request, *args, **kwargs):
         slug = kwargs['slug']
+        product = get_object_or_404(Product, slug=slug)
+        reviews = Review.objects.filter(product=product)
+
+        try:
+            user_review = reviews.get(user=request.user)
+        except ObjectDoesNotExist:
+            user_review = None
+
+        rating_percentages = []
+        for i in range(5,0,-1):
+            # rating_percentages.append(str(reviews.filter(rating=i).count()/review_count * 100) + "%")
+            rating_percentages.append((reviews.filter(rating=i).count()))
         # form = ProductQuantityForm()
+
+        reviews = reviews.exclude(comment='').order_by('-updated_at')
+
+        
+
+        page = request.GET.get('page', 1)
+
+        paginator = Paginator(reviews, 1)
+        try:
+            reviews = paginator.page(page)
+        except PageNotAnInteger:
+            reviews = paginator.page(1)
+        except EmptyPage:
+            reviews = paginator.page(paginator.num_pages)
+
         context = {
-            'object': get_object_or_404(Product, slug=slug),
+            'object': product,
+            'reviews': reviews,
+            'percentages': rating_percentages,
+            'user_review': user_review,
            # 'form': form,
         }
         return render(request, 'product.html', context)
 
     def post(self, request, *args, **kwargs):
         slug = kwargs['slug']
-        form = ProductQuantityForm(request.POST)
-        item = get_object_or_404(Product, slug=slug)
-        quantity = int(form.data['quantity'])
+        if 'submit-add' in request.POST:
+            form = ProductQuantityForm(request.POST)
+            item = get_object_or_404(Product, slug=slug)
+            quantity = int(form.data['quantity'])
 
-        if quantity > item.stock:
-            messages.error(request, 'Chosen quantity exceeds stock.')
-            return redirect('product', slug=slug)
+            if quantity > item.stock:
+                messages.error(request, 'Chosen quantity exceeds stock.')
+                return redirect('product', slug=slug)
 
-        if quantity <= 0:
-            messages.error(request, 'Choose a valid amount.')
-            return redirect('product', slug=slug)
+            if quantity <= 0:
+                messages.error(request, 'Choose a valid amount.')
+                return redirect('product', slug=slug)
 
-        order_item, created = CartProduct.objects.get_or_create(
-            item=item,
-            user=request.user,
-            ordered=False
-        )
+            order_item, created = CartProduct.objects.get_or_create(
+                item=item,
+                user=request.user,
+                ordered=False
+            )
 
-        order_qs = Order.objects.filter(user=request.user, ordered=False)
-        if order_qs.exists():
-            order = order_qs[0]
-            # check if the order item is in the order
-            if order.items.filter(item__slug=item.slug).exists():
-                if (order_item.quantity + quantity) > item.stock:
-                    messages.error(request, 'You already have this item in cart. Total quantity exceeds stock.')
-                    return redirect('product', slug=slug)
+            order_qs = Order.objects.filter(user=request.user, ordered=False)
+            if order_qs.exists():
+                order = order_qs[0]
+                # check if the order item is in the order
+                if order.items.filter(item__slug=item.slug).exists():
+                    if (order_item.quantity + quantity) > item.stock:
+                        messages.error(request, 'You already have this item in cart. Total quantity exceeds stock.')
+                        return redirect('product', slug=slug)
 
-                order_item.quantity += quantity
-                order_item.save()
+                    order_item.quantity += quantity
+                    order_item.save()
+                else:
+                    order_item.quantity = quantity
+                    order_item.save()
+                    order.items.add(order_item)
             else:
+                ordered_date = timezone.now()
+                order = Order.objects.create(
+                    user=request.user, date_ordered=ordered_date)
                 order_item.quantity = quantity
-                order_item.save()
                 order.items.add(order_item)
-        else:
-            ordered_date = timezone.now()
-            order = Order.objects.create(
-                user=request.user, date_ordered=ordered_date)
-            order_item.quantity = quantity
-            order.items.add(order_item)
-        request.session['items_total'] = order.items.count()
-        messages.success(request, 'Item added to cart.')
-        return redirect('product', slug=slug)
+            request.session['items_total'] = order.items.count()
+            messages.success(request, 'Item added to cart.')
+            return redirect('product', slug=slug)
+        else:   #Review part
+            user = request.user
+            item = get_object_or_404(Product, slug=slug)
+            review, created = Review.objects.get_or_create(
+                product=item,
+                user=request.user,
+            )
+            review.updated_at = timezone.now()
+            form = ReviewForm(request.POST,instance=review)
+            form.save()
+            
+            return redirect('product', slug=slug)
 
 class CartView(LoginRequiredMixin, View):
     def get(self, request):
@@ -187,6 +225,32 @@ class LoadSubregionsView(LoginRequiredMixin, View):
         region_id = request.GET.get('region_id')
         subregions = SubRegion.objects.filter(region_id=region_id)
         return render(request, 'ajax_form/subregion_dropdown_list.html', { 'subregions': subregions})
+
+class ContactView(View):
+    def get(self, request, *args, **kwargs):
+        form = ContactForm()
+        return render(request, "contact.html", {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = "Website Inquiry"
+            body = {
+			'first_name': form.cleaned_data['first_name'], 
+			'last_name': form.cleaned_data['last_name'], 
+			'email': form.cleaned_data['email_address'], 
+			'message':form.cleaned_data['message'], 
+			}
+            message = "\n".join(body.values())
+            try:
+                send_mail(subject, message, 'admin@example.com', ['admin@example.com']) 
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect ("contact")
+
+            
+
+
 
 
 # class AddToCartView(LoginRequiredMixin, View):

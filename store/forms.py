@@ -2,7 +2,7 @@ from typing import Type
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Address
+from .models import Address, Review
 from cities_light.models import City, Region, SubRegion
 
 class UserModelChoiceField(forms.ModelChoiceField):
@@ -16,6 +16,16 @@ class ProductIDQuantityForm(forms.Form):
     product_id = forms.IntegerField(widget=forms.HiddenInput())
     quantity = forms.IntegerField(min_value=1)
 
+class ContactForm(forms.Form):
+	first_name = forms.CharField(max_length = 50)
+	last_name = forms.CharField(max_length = 50)
+	email_address = forms.EmailField(max_length = 150)
+	message = forms.CharField(widget = forms.Textarea, max_length = 2000)
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ( 'subject', 'comment', 'rating')
 
 class AddressForm(forms.ModelForm):
     address = forms.CharField(max_length=400, required=True)

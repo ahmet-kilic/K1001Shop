@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block content %}
 
@@ -24,9 +26,12 @@
 
           <!--Content-->
           <div class="p-4">
-            <h3> {{ object.name }} </h3>
+            <h3> {{ object.name }} 
+            
+            </h3>
+
             <div class="mb-3">
-              <a href="">
+              <a href="{{ object.category.get_absolute_url }}#category">
                 <span class="badge purple mr-1"> {{ object.category.title }}</span>
               </a>
               {% comment %}
@@ -57,7 +62,7 @@
                   <!-- Default input -->
                   {% csrf_token %}
                   <input type="number" min="1" name="quantity" value="1" aria-label="Search" class="form-control" style="width: 100px">
-                  <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                  <button name="submit-add" class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
                     <i class="fas fa-shopping-cart ml-1"></i>
                   </button>
                 </form>
@@ -93,8 +98,8 @@
 
       <nav>
         <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Description</a>
-          <a class="nav-item nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</a>
+          <a class="nav-item nav-link" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info">Description</a>
+          <a class="nav-item nav-link" id="nav-reviews-tab" data-toggle="tab" href="#nav-reviews" role="tab" aria-controls="nav-reviews">Reviews ( {{ object.count_reviews }}  )</a>
         </div>
       </nav>
       <div class="tab-content" id="nav-tabContent">
@@ -114,9 +119,236 @@
         </div>
         <!-- .. -->
         </div>
-        <div class="tab-pane fade" id="nav-reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">Reviews Here</div>
-      </div>
 
+        <!-- Reviews -->
+        <div class="tab-pane fade" id="nav-reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">
+        <div class="container mt-4">
+              <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-6">
+                      <div class="well well-sm">
+                          <div class="row">
+                              <div class="col-xs-12 col-md-6">
+                                  <div class="row rating-desc">
+                                      <div class="col-xs-3 col-md-3 text-xs-right">
+                                          <span class="fa fa-star"></span>5
+                                      </div>
+                                      <div class="col-xs-8 col-md-9">
+                                          <div class="progress">
+                                              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20"
+                                                  aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio percentages.0 object.count_reviews 100 %}%">
+                                                  {% if percentages.0 %} {{ percentages.0 }} {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-xs-3 col-md-3 text-xs-right">
+                                          <span class="fa fa-star"></span>4
+                                      </div>
+                                      <div class="col-xs-8 col-md-9">
+                                          <div class="progress">
+                                              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20"
+                                                  aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio percentages.1 object.count_reviews 100 %}%">
+                                                  {% if percentages.1 %} {{ percentages.1 }} {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-xs-3 col-md-3 text-xs-right">
+                                          <span class="fa fa-star"></span>3
+                                      </div>
+                                      <div class="col-xs-8 col-md-9">
+                                          <div class="progress">
+                                              <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20"
+                                                  aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio percentages.2 object.count_reviews 100 %}%">
+                                                  {% if percentages.2 %} {{ percentages.2 }} {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-xs-3 col-md-3 text-xs-right">
+                                          <span class="fa fa-star"></span>2
+                                      </div>
+                                      <div class="col-xs-8 col-md-9">
+                                          <div class="progress">
+                                              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="20"
+                                                  aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio percentages.3 object.count_reviews 100 %}%">
+                                                  {% if percentages.3 %} {{ percentages.3 }} {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-xs-3 col-md-3 text-xs-right">
+                                          <span class="fa fa-star"></span>1
+                                      </div>
+                                      <div class="col-xs-8 col-md-9">
+                                          <div class="progress">
+                                              <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80"
+                                                  aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio percentages.4 object.count_reviews 100 %}%">
+                                                  {% if percentages.4 %} {{ percentages.4 }} {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <!-- end row -->
+                              </div>
+                              <div class="col-xs-12 col-md-6 text-xs-center">
+                                  <h1 class="rating-num">{{ object.get_rating }}</h1>
+                                  <div class="rating jq-class" data-score="{{ object.get_rating }}">
+                                  </div>
+                                  <div>
+                                      <span class="fa fa-user"></span> {{ object.count_reviews }} total votes
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-3"></div>
+              </div>
+          </div>
+          <hr>
+          <!-- Rating Card End -->
+          <div class="row mt-5" >
+            <div class="col-md-6">
+              <div>
+                
+                  <div>
+                    {% for review in reviews %}
+                      {% if review.comment %}
+                        <div>
+                          <div><i class="fas fa-user-alt"></i> {{ review.user.first_name }} <i class="far fa-clock ml-3"></i> {{ review.updated_at }}
+                            <div class="float-right jq-class" data-score="{{ review.rating }}">
+                            </div>
+                          </div>
+                          
+                          
+                        </div>
+                        <div class="mt-2">
+                        <h5> {{ review.subject }} </h5>
+                          <p> {{ review.comment }}</p>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+
+                <!-- Pagination here -->
+
+                <!--Pagination-->
+                <nav class="d-flex justify-content-center wow fadeIn">
+                {% if reviews.has_other_pages %}
+                  <ul class="pagination pg-blue">
+
+                    <!--Arrow left-->
+                    {% if reviews.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" id="previous_button" href="?page={{ reviews.previous_page_number }}#reviews" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    {% endif %}
+
+                    {% for i in reviews.paginator.page_range %}
+                      {% if reviews.number == i %}
+                        <li class="page-item active">
+                          <a class="page-link">{{ i }}
+                            <span class="sr-only">(current)</span>
+                          </a>
+                        </li>
+                      {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ i }}#reviews">{{ i }}</a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if reviews.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" id="next_button" href="?page={{ reviews.next_page_number }}#reviews" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+                </nav>
+                <!--Pagination-->
+             
+              </div>
+            </div>
+            <div class="col-sm-6">
+              {% if user.is_authenticated %}
+                {% if user_review %}
+
+                  <div>
+                    <div>
+                      <h5> Your Review: </h5>
+                      <hr>
+                      <a><i class="far fa-clock"></i> {{ user_review.updated_at }}</a>
+                      <div class="float-right jq-class" data-score="{{ user_review.rating }}">
+                      </div>
+                    </div>
+                    </div>
+                    <div class="mt-2">
+                    <h5> {{ user_review.subject }} </h5>
+                    <p> {{ user_review.comment }}</p>
+                  </div>
+                  <hr>
+                  <h4 class="text-uppercase">Update Your Review</h4>
+                {% else %}
+                  <h4 class="text-uppercase">Write Your Review</h4>
+                {% endif %}
+                <form id="review_form" method="post" novalidate>
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <input maxlength="40" class="input form-control" name="subject" placeholder="Subject" />
+                  </div>
+                  <div class="form-group">
+                    <textarea maxlength="400" class="input form-control" name="comment" style="height: 120px;" placeholder="Your review"></textarea>
+                  </div>
+                  <div>
+                    <strong class="text-uppercase">Your Rating: </strong>
+                  </div>
+                  <div class="form-group">    
+
+                      <div class="stars">
+                        <input class="star star-5" id="star-5" type="radio" name="rating" value="5" required> <label class="star star-5" for="star-5"></label> 
+                        <input class="star star-4" id="star-4" type="radio" name="rating" value="4" checked required> <label class="star star-4" for="star-4"></label> 
+                        <input class="star star-3" id="star-3" type="radio" name="rating" value="3" required> <label class="star star-3" for="star-3"></label> 
+                        <input class="star star-2" id="star-2" type="radio" name="rating" value="2" required> <label class="star star-2" for="star-2"></label>                       
+                        <input class="star star-1" id="star-1" type="radio" name="rating" value="1" required> <label class="star star-1" for="star-1"></label>
+                      </div>
+
+                  </div>
+                  <div>
+                    <button name="submit-review" class="btn btn-primary d-flex justify-content-start">Submit</button>
+                  </div>
+                </form>
+              {% else %}
+                  <div>
+                    Please <a href="{% url 'login' %}">log in</a> to write a review.
+                  </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+
+      <nav aria-label="Page navigation">
+        <ul class="pagination" id="pagination"></ul>
+    </nav>
       <!--Grid row-->
       <div class="row wow fadeIn">
 
@@ -129,7 +361,7 @@
         <!--Grid column-->
 
         <!--Grid column-->
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-lg-4 col-md-6 mb-4" id="reviews">
 
           <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/12.jpg" class="img-fluid" alt="">
 
@@ -150,6 +382,89 @@
     </div>
 
   </main>
+
+
+  <script>
+      
+        $('.jq-class').raty({
+          score: function() {
+            return $(this).attr('data-score');
+          },
+          readOnly:true
+        })
+
+  </script>
+
+  <script>
+    $('a[data-toggle="tab"]').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+    });
+
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+        var id = $(e.target).attr("href");
+        localStorage.setItem('selectedTab', id)
+    });
+
+    var selectedTab = localStorage.getItem('selectedTab');
+    if (selectedTab != null) {
+        $('a[data-toggle="tab"][href="' + selectedTab + '"]').tab('show');
+    }
+
+  </script>
+
+  <!--
+  <script>
+    function simpleTemplating(data) {
+      var html = '<ul>';
+      $.each(data, function(index, item){
+          html += '<li>'+ item +'</li>';
+      });
+      html += '</ul>';
+      return html;
+    }
+    $(document).ready(function()
+    {
+      $('#pagination-container').pagination({
+          dataSource: [1, 2, 3, 4, 5, 6, 7, ... , 195],
+          callback: function(data, pagination) {
+              var html = simpleTemplating(data);
+              $('#data-container').html(html);
+          }
+      });
+    });
+  </script>
+
+
+  <script>
+      // init bootpag
+      $('#page-selection').twbsPagination({
+        totalPages: 35,
+        visiblePages: 7,
+        onPageClick: function (event, page) {
+          $('#content').text('Page ' + page);
+        }
+      });
+  </script>
+
+  <script type="text/javascript">
+    $(function () {
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: 35,
+            visiblePages: 10,
+            onPageClick: function (event, page) {
+                console.info(page + ' (from options)');
+            }
+        }).on('page', function (event, page) {
+            console.info(page + ' (from event listening)');
+        });
+    });
+</script>
+  -->
+
+  
+
+
 
   <!--Main layout-->
 {% endblock content %}
