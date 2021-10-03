@@ -1,0 +1,6 @@
+accounts/__pycache__/
+accounts/migrations/
+accounts/templatetags/__pycache__/
+K1001Shop/__pycache__/
+store/__pycache__/
+store/migrations/
