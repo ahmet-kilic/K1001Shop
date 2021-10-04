@@ -52,7 +52,10 @@ class ProductView(View):
         reviews = Review.objects.filter(product=product)
 
         try:
-            user_review = reviews.get(user=request.user)
+            if request.user.is_authenticated:
+                user_review = reviews.get(user=request.user)
+            else:
+                user_review = None
         except ObjectDoesNotExist:
             user_review = None
 
@@ -65,22 +68,14 @@ class ProductView(View):
         reviews = reviews.exclude(comment='').order_by('-updated_at')
 
         
-
-        page = request.GET.get('page', 1)
-
-        paginator = Paginator(reviews, 1)
-        try:
-            reviews = paginator.page(page)
-        except PageNotAnInteger:
-            reviews = paginator.page(1)
-        except EmptyPage:
-            reviews = paginator.page(paginator.num_pages)
+        paginator = Paginator(reviews, 3)
 
         context = {
             'object': product,
             'reviews': reviews,
             'percentages': rating_percentages,
             'user_review': user_review,
+            'page_count': paginator.num_pages
            # 'form': form,
         }
         return render(request, 'product.html', context)
@@ -248,6 +243,18 @@ class ContactView(View):
                 return HttpResponse('Invalid header found.')
             return redirect ("contact")
 
+class AjaxReviewsView(View):
+    def get(self, request):
+        pageNo = int(request.GET.get('page'))
+        product_id = request.GET.get('product_id')
+        pageSize = 3
+
+        starting_number = (pageNo - 1) * pageSize
+        ending_number = pageNo * pageSize
+
+        reviews = Review.objects.filter(product_id=product_id).exclude(comment='').order_by('-updated_at')[starting_number:ending_number]
+
+        return render(request, 'ajax_reviews.html', { 'reviews': reviews})
             
 
 

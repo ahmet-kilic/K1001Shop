@@ -33,7 +33,7 @@ urlpatterns = [
     path('contact/',views.ContactView.as_view(), name='contact'),
     path('product/<slug:slug>', views.ProductView.as_view(), name='product'),
     path('signup/',accounts_views.SignUpView.as_view(),name='signup'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('login/', accounts_views.CustomLoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('reset/',
     auth_views.PasswordResetView.as_view(
@@ -61,6 +61,7 @@ urlpatterns = [
     path('addresses/add', views.AddAddressView.as_view(), name='add_address'),
     path('addresses/remove/<int:id>/', views.DeleteAddressView.as_view(), name='delete_address'),
     path('ajax/load-subregions/', views.LoadSubregionsView.as_view() , name='ajax_load_subregions'),
+    path('ajax/reviews/', views.AjaxReviewsView.as_view(), name='ajax_reviews'),
     path('cart/', views.CartView.as_view(), name='cart'),
     path('<slug:slug>/', views.HomeView.as_view(), name='category_home' ), # Problem in here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

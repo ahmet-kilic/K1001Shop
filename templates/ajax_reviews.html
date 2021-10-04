@@ -1,0 +1,32 @@
+{% load static %}
+
+{% load humanize %}
+
+{% for review in reviews %}
+    {% if review.comment %}
+        <div>
+            <div><i class="fas fa-user-alt"></i> {{ review.user.first_name }} <i class="far fa-clock ml-3"></i> {{ review.updated_at|naturaltime }}
+            <div class="float-right jq-class" data-score="{{ review.rating }}">
+            </div>
+            </div>
+            
+            
+        </div>
+        <div class="mt-2">
+        <h5 class="font-weight-bold"> {{ review.subject }} </h5>
+            <p> {{ review.comment }}</p>
+        </div>
+        <hr>
+    {% endif %}
+{% endfor %}
+
+<script>
+      
+        $('.jq-class').raty({
+          score: function() {
+            return $(this).attr('data-score');
+          },
+          readOnly:true
+        })
+
+  </script>

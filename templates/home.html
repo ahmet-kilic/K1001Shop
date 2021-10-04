@@ -126,10 +126,7 @@
       <span class="sr-only">Next</span>
     </a>
     <!--/.Controls-->
-    
-  </div>
-    <a name="category"></a>
-
+  <div id="category">
   <!--carousel-->
 
   <main>
@@ -229,7 +226,11 @@
                   {% endif %}
                   </strong>
                 </h4>
-                <h5> <i class="fas fa-star" style="color:	orange"></i> {{ item.get_rating }} </h5>
+                {% if item.count_reviews %}
+                <h5> <i class="fas fa-star" style="color:	orange"></i> 
+                  {{ item.get_rating }} - {{ item.count_reviews }} {% if item.count_reviews == 1 %} Review {% else %} Reviews {% endif %}               
+                </h5>
+                {% endif %}
 
               </div>
 
@@ -243,14 +244,14 @@
       <!--Section: Products v.3-->
 
       <!--Pagination-->
-      <nav class="d-flex justify-content-center wow fadeIn">
+      <nav id="pagination" class="d-flex justify-content-center wow fadeIn">
       {% if products.has_other_pages %}
         <ul class="pagination pg-blue">
 
           <!--Arrow left-->
           {% if products.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ products.previous_page_number }}#category" aria-label="Previous">
+            <a class="page-link" href="?page={{ products.previous_page_number }}#pagination" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
               <span class="sr-only">Previous</span>
             </a>
@@ -273,14 +274,14 @@
               </li>
             {% else %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ i }}#category">{{ i }}</a>
+                <a class="page-link" href="?page={{ i }}#pagination">{{ i }}</a>
               </li>
             {% endif %}
           {% endfor %}
 
           {% if products.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ products.next_page_number }}#category" aria-label="Next">
+            <a class="page-link" href="?page={{ products.next_page_number }}#pagination" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
               <span class="sr-only">Next</span>
             </a>

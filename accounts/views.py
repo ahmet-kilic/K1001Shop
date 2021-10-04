@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.generic import View, UpdateView
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .forms import AccountSettingsForm, SignUpForm
@@ -10,7 +11,32 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
+
+
+import sys
+  
+# setting path
+sys.path.append('../store')
+  
+# importing
+from store.models import Order
+
 # TODO Add Login Required Mixins
+
+
+class CustomLoginView(LoginView):
+    def form_valid(self, form):
+        auth_login(self.request, form.get_user())
+        try:
+            order = Order.objects.get(user=form.get_user(), ordered=False)
+            self.request.session['items_total'] = order.items.count()
+        except ObjectDoesNotExist:
+            order = None
+            self.request.session['items_total'] = 0
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class SignUpView(View):
     def post(self, request):
@@ -29,9 +55,11 @@ class SettingsChangeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user = request.user
         form = AccountSettingsForm(request.POST, instance=user)
-        form.save()
-        messages.success(request, 'Settings successfully changed.')
-        return redirect('my_account')
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Settings successfully changed.')
+            return redirect('my_account')
+        return render(request, 'change_settings.html', {'form': form, 'user': user})
 
     def get(self,request):
         form = AccountSettingsForm()
