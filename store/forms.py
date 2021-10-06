@@ -28,18 +28,22 @@ class ReviewForm(forms.ModelForm):
         fields = ( 'subject', 'comment', 'rating')
 
 class AddressForm(forms.ModelForm):
-    address = forms.CharField(max_length=400, required=True)
+    name = forms.CharField(max_length=50, required=True)
+    address = forms.CharField(max_length=400, required=True, widget=forms.Textarea(attrs={
+        'rows': 3,
+    }))
     region = UserModelChoiceField(queryset=Region.objects.all(), required=True, widget=forms.Select())
     subregion = UserModelChoiceField(queryset=SubRegion.objects.all(), required=True, widget=forms.Select())
     zip = forms.CharField(max_length=50, required=True)
 
     class Meta:
         model = Address
-        fields = ( 'address' , 'region', 'subregion', 'zip')
+        fields = ( 'name', 'address' , 'region', 'subregion', 'zip')
 
     def _init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['subregion'].queryset = SubRegion.objects.none()
+        self.fields['address'].widget.attrs['rows'] = 2
 
         if 'region' in self.data:
             try:

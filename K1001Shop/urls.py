@@ -63,6 +63,7 @@ urlpatterns = [
     path('ajax/load-subregions/', views.LoadSubregionsView.as_view() , name='ajax_load_subregions'),
     path('ajax/reviews/', views.AjaxReviewsView.as_view(), name='ajax_reviews'),
     path('cart/', views.CartView.as_view(), name='cart'),
+    path('checkout/', views.CheckoutView.as_view(), name='checkout'),
     path('<slug:slug>/', views.HomeView.as_view(), name='category_home' ), # Problem in here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

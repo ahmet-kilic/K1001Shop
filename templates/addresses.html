@@ -11,6 +11,7 @@
             <h1> Your Addresses </h1>
             <hr width="%500">
             {% for a in addresses %}
+                <h4 class=""> <strong> {{ a.name }} </strong> </h4>
                 <a class="align-middle" style="font-size:20px;"> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} 
                 </a>
                 <a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">

@@ -77,15 +77,16 @@ class Review(models.Model):
 
 
 class Address(models.Model):
+    name = models.CharField(max_length=100, default="Default Address")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=400)
-    region = models.ForeignKey(Region, on_delete=models.RESTRICT)
-    subregion = models.ForeignKey(SubRegion, on_delete=models.RESTRICT, null=True)
+    region = models.ForeignKey(Region, on_delete=models.RESTRICT, verbose_name="City")
+    subregion = models.ForeignKey(SubRegion, on_delete=models.RESTRICT, verbose_name="Province", null=True)
     zip = models.CharField(max_length=50)
     
     def __str__(self):
-        return self.user.username
-
+        return f' {self.name} of {self.user.username}'
+        
     class Meta:
         verbose_name_plural = "Addresses"
 
@@ -131,4 +132,4 @@ class Order(models.Model):
         total = 0
         for order_item in self.items.all():
             total += order_item.get_final_price()
-        return total
+        return round(total,2)

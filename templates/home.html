@@ -178,9 +178,9 @@
           </ul>
           <!-- Links -->
 
-          <form class="form-inline">
-            <div class="md-form my-0">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <form method="GET" class="form-inline">
+            <div class="md-form my-0 input-field">
+              <input class="form-control mr-sm-2" type="text" name="q" value="{{ request.GET.q }}" placeholder="{% if request.GET.q %} {{ request.GET.q }} {% else %} Search {% endif %} " aria-label="Search">
             </div>
           </form>
         </div>
@@ -251,7 +251,7 @@
           <!--Arrow left-->
           {% if products.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ products.previous_page_number }}#pagination" aria-label="Previous">
+            <a class="page-link" href="?page={{ products.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}#pagination" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
               <span class="sr-only">Previous</span>
             </a>
@@ -274,14 +274,14 @@
               </li>
             {% else %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ i }}#pagination">{{ i }}</a>
+                <a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}#pagination">{{ i }}</a>
               </li>
             {% endif %}
           {% endfor %}
 
           {% if products.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ products.next_page_number }}#pagination" aria-label="Next">
+            <a class="page-link" href="?page={{ products.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}#pagination" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
               <span class="sr-only">Next</span>
             </a>

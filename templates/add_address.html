@@ -4,6 +4,7 @@
 
 {% block content %}
 {% include 'includes/navbar.html' %}
+{% include 'includes/scripts.html' %}
   <div class="row">
     <div class="col-lg-6 col-md-8 col-sm-10">
         <ul class="mr-auto">
@@ -16,7 +17,6 @@
     </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script>
       $("#id_region").change(function () {
           const url = $("#addressForm").attr("data-subregions-url");  // get the url of the `load_cities` view
@@ -43,5 +43,17 @@
           });
 
       });
+  </script>
+
+  <script>
+    $(document).ready(function()
+    {
+        $('#id_region').select2({
+
+        });
+        $('#id_subregion').select2({
+
+        });
+    });
   </script>
 {% endblock %}

@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.http import HttpResponse
 from django.core.mail import send_mail, BadHeaderError
+from django.db.models import Q
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -25,6 +26,10 @@ class HomeView(View):
         else:
             categories = Category.objects.all()
             products = Product.objects.all()
+
+        query = request.GET.get('q')
+        if query:
+            products = products.filter(name__icontains=query)
 
         page = request.GET.get('page', 1)
 
@@ -160,8 +165,10 @@ class CartView(LoginRequiredMixin, View):
         cartproduct_id = int(form.data['product_id'])
         quantity = int(form.data['quantity'])
         cart_product = get_object_or_404(CartProduct, id=cartproduct_id)
+        print(cart_product)
 
         if request.POST.get('delete'):
+            print(cartproduct_id)
             cart_product.delete()
             messages.success(request, f'{cart_product.item.name} successfully deleted from cart.')
             request.session['items_total'] -= 1
@@ -202,7 +209,8 @@ class AddAddressView(LoginRequiredMixin, View):
             address = form.save(commit=False)
             address.user = user
             address.save()
-        return redirect('addresses')
+            return redirect('addresses')
+        return render(request, 'add_address.html', {'form': form , 'user': user})
 
     def get(self, request):
         form = AddressForm()
@@ -256,12 +264,16 @@ class AjaxReviewsView(View):
 
         return render(request, 'ajax_reviews.html', { 'reviews': reviews})
             
+class CheckoutView(LoginRequiredMixin, View):
+    def get(self, request):
+        try:
+            order = Order.objects.get(user=request.user, ordered=False)
+            context = {
+                'order' : order,
+            }
+            return render(request, 'checkout.html', context)
 
-
-
-
-# class AddToCartView(LoginRequiredMixin, View):
-#     def get
-
+        except:
+            return render(request, 'checkout.html')
 
 # Create your views here.
