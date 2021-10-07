@@ -6,8 +6,7 @@ from django_countries.fields import CountryField
 from cities_light.models import City, Region, SubRegion
 from django.utils import timezone
 
-# Create your models here.
-
+# Create your models here.        
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
@@ -121,6 +120,10 @@ class Order(models.Model):
     ordered = models.BooleanField(default=False)
     shipping_address = models.ForeignKey(
         Address, related_name='shipping_address', on_delete=models.SET_NULL, blank=True, null=True)
+    being_delivered = models.BooleanField(default=False)
+    received = models.BooleanField(default=False)
+    refund_requested = models.BooleanField(default=False)
+    refund_granted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -133,3 +136,25 @@ class Order(models.Model):
         for order_item in self.items.all():
             total += order_item.get_final_price()
         return round(total,2)
+
+class Balance(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+class Refund(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    reason = models.TextField()
+    accepted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.pk}"
+
+
+class Payment(models.Model):
+    stripe_charge_id = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    amount = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username

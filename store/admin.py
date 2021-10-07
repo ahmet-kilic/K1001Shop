@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Address, CartProduct, Product, Category, Order, Review
+from .models import Address, CartProduct, Product, Category, Order, Review, Refund, Balance, Payment
 # Register your models here.
 
 
@@ -9,3 +9,6 @@ admin.site.register(CartProduct)
 admin.site.register(Order)
 admin.site.register(Address)
 admin.site.register(Review)
+admin.site.register(Balance)
+admin.site.register(Refund)
+admin.site.register(Payment)

@@ -233,7 +233,7 @@
                     </div>
                     <div class="mt-2">
                     <h5 class="font-weight-bold"> {{ user_review.subject }} </h5>
-                    <p> {{ user_review.comment }}</p>
+                    {{ user_review.comment| safe }}
                   </div>
                   <hr>
                   <h4 class="text-uppercase">Update Your Review</h4>
@@ -277,37 +277,61 @@
       </div>
       <hr>
 
-      
+      <h2 class="text-center"> Best Rated of This Category </h2>      
 
       <!--Grid row-->
-      <div class="row wow fadeIn">
+      <section class="text-center mb-4">
+        <div class="row wow fadeIn">
 
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-12 mb-4">
+{% for item in best_rated %}
+<div class="col-lg-3 col-md-6 mb-4">
 
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/11.jpg" class="img-fluid" alt="">
+    <div class="card" style="width: 250px; height: 350px">
 
-        </div>
-        <!--Grid column-->
+    <div class="view overlay">
+        {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
+        <img style="height: 100%; width: 100%; object-fit: contain" src="{{ item.image.url }}" class="card-img-top">
+        <a href="{{ item.get_absolute_url }}">
+        <div class="mask rgba-white-slight"></div>
+        </a>
+    </div>
 
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-6 mb-4" id="reviews">
+    <div class="card-body text-center">
+        <h5>
+        <strong>
+            <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.name }}
+            </a>
+        </strong>
+        </h5>
 
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/12.jpg" class="img-fluid" alt="">
+        <h4 class="font-weight-bold blue-text">
+        <strong>
+        {% if item.discount_price %}
+        <span class="mr-1">
+            <del>₺{{ item.price }}</del>
+        </span>
+        <span>₺{{ item.discount_price }}</span>
+        {% else %}
+        <span>₺{{ item.price }}</span>
+        {% endif %}
+        </strong>
+        </h4>
+        {% if item.count_reviews %}
+        <h5> <i class="fas fa-star" style="color:	orange"></i> 
+        {{ item.get_rating }} - {{ item.count_reviews }} {% if item.count_reviews == 1 %} Review {% else %} Reviews {% endif %}               
+        </h5>
+        {% endif %}
 
-        </div>
-        <!--Grid column-->
+    </div>
 
-        <!--Grid column-->
-        <div class="col-lg-4 col-md-6 mb-4">
+    </div>
 
-          <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/13.jpg" class="img-fluid" alt="">
+</div>
+{% endfor %}
+</div>
 
-        </div>
-        <!--Grid column-->
 
-      </div>
-      <!--Grid row-->
+      </section>
 
     </div>
 
@@ -352,6 +376,10 @@
       $('#page-selection').twbsPagination({
         totalPages: '{{ page_count }}',
         visiblePages: 5,
+        next: '>',
+        prev: '<',
+        last: '≫',
+        first: '≪',
         onPageClick: function (event, page) {
           $.ajax({                       // initialize an AJAX request
               url: "{% url 'ajax_reviews' %}",                    // set the url of the request (= /persons/ajax/load-cities/ )
@@ -367,19 +395,6 @@
       });
   </script>
 
-  <script type="text/javascript">
-    $(function () {
-        window.pagObj = $('#pagination').twbsPagination({
-            totalPages: 35,
-            visiblePages: 10,
-            onPageClick: function (event, page) {
-                console.info(page + ' (from options)');
-            }
-        }).on('page', function (event, page) {
-            console.info(page + ' (from event listening)');
-        });
-    });
-  </script>
 
   <script>
     ClassicEditor

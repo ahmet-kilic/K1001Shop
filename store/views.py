@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.http import HttpResponse
 from django.core.mail import send_mail, BadHeaderError
-from django.db.models import Q
+from django.db.models import Q, Avg
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -75,13 +75,16 @@ class ProductView(View):
         
         paginator = Paginator(reviews, 3)
 
+        # Filter only get with more than 10 reviews but for this project not needed.
+        best_rated = Product.objects.filter(category=product.category).annotate(avg_score=Avg('review__rating')).order_by('-avg_score')[0:4]
+
         context = {
             'object': product,
             'reviews': reviews,
             'percentages': rating_percentages,
             'user_review': user_review,
-            'page_count': paginator.num_pages
-           # 'form': form,
+            'page_count': paginator.num_pages,
+            'best_rated': best_rated,
         }
         return render(request, 'product.html', context)
 
@@ -264,6 +267,7 @@ class AjaxReviewsView(View):
 
         return render(request, 'ajax_reviews.html', { 'reviews': reviews})
             
+
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, request):
         try:
