@@ -2,7 +2,7 @@ from typing import Type
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Address, Review
+from .models import Address, Refund, Review
 from cities_light.models import City, Region, SubRegion
 
 class UserModelChoiceField(forms.ModelChoiceField):
@@ -26,6 +26,11 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ( 'subject', 'comment', 'rating')
+
+class RefundForm(forms.ModelForm):
+    class Meta:
+        model = Refund
+        fields = ('reason',)
 
 class AddressForm(forms.ModelForm):
     name = forms.CharField(max_length=50, required=True)

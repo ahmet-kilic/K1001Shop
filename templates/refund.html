@@ -1,0 +1,152 @@
+
+{% extends 'base.html' %}
+
+
+{% block content %}
+<body class="grey lighten-3">
+
+  <!-- Navbar -->
+  {% include 'includes/navbar.html' %}
+  <!-- Navbar -->
+
+  <!--Main layout-->
+  <main>
+    <div class="container wow fadeIn">
+
+      <!-- Heading -->
+      <h2 class="my-5 h2 text-center">Refund Form</h2>
+
+      <!--Grid row-->
+      <div class="row">
+
+        <!--Grid column-->
+        <div class="col-md-8 mb-4">
+
+          <!--Card-->
+          <div class="card">
+
+            <!--Card content-->
+
+           <form class="card-body" method="post" id="refundForm" novalidate>
+                    {% csrf_token %}
+                    {% include 'includes/form.html' %}
+                            <p> Please specify product details(e.g. name), if you want to refund a specific product.</p>
+
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+
+
+          </div>
+          <!--/.Card-->
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-md-4 mb-4">
+
+          <!-- Heading -->
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Order</span>
+            <span class="badge badge-secondary badge-pill">{{ order.items.count }}</span>
+          </h4>
+
+          <!-- Cart -->
+          <ul class="list-group mb-3 z-depth-1">
+            {% for order_item in order.items.all %}
+              <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                  <h6 class="my-0">{{ order_item.item.name }} </br> x {{ order_item.quantity }}</h6>
+                  <small class="text-muted">{{ order_item.item.category.title }}</small>
+                </div>
+                <span class="text-muted">₺{{ order_item.get_final_price }}</span>
+              </li>
+            {% endfor %}
+            
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Total (USD)</span>
+              <strong>₺ {{ order.get_total }}</strong>
+            </li>
+          </ul>
+          <!-- Cart -->
+
+          <!-- Promo code -->
+          
+          <!-- Promo code -->
+
+        </div>
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+
+  
+
+</body>
+
+
+<script>ClassicEditor
+				.create( document.querySelector( '#id_reason' ), {
+					
+				toolbar: {
+					items: [
+						'heading',
+						'|',
+						'bold',
+						'italic',
+						'link',
+						'bulletedList',
+						'numberedList',
+						'|',
+						'outdent',
+						'indent',
+						'|',
+						'imageUpload',
+						'blockQuote',
+						'insertTable',
+						'undo',
+						'redo'
+					]
+				},
+				language: 'en',
+				image: {
+					toolbar: [
+						'imageTextAlternative',
+						'imageStyle:inline',
+						'imageStyle:block',
+						'imageStyle:side'
+					]
+				},
+				table: {
+					contentToolbar: [
+						'tableColumn',
+						'tableRow',
+						'mergeTableCells'
+					]
+				},
+					licenseKey: '',
+					
+					
+					
+				} )
+				.then( editor => {
+					window.editor = editor;
+			
+					
+					
+					
+				} )
+				.catch( error => {
+					console.error( 'Oops, something went wrong!' );
+					console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+					console.warn( 'Build id: 24wli16rgyf0-unt8fr6ckh47' );
+					console.error( error );
+				} );
+		</script>
+
+
+{% endblock %}

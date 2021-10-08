@@ -64,6 +64,8 @@ urlpatterns = [
     path('ajax/reviews/', views.AjaxReviewsView.as_view(), name='ajax_reviews'),
     path('cart/', views.CartView.as_view(), name='cart'),
     path('checkout/', views.CheckoutView.as_view(), name='checkout'),
+    path('orders/', views.OrdersView.as_view(), name='orders'),
+    path('orders/refund/<int:pk>/', views.RefundView.as_view(), name='refund'),
     path('<slug:slug>/', views.HomeView.as_view(), name='category_home' ), # Problem in here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

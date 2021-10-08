@@ -66,7 +66,7 @@ class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     subject = models.CharField(max_length=40, blank=True)
-    comment = models.CharField(max_length=400, blank=True)
+    comment = models.TextField(blank=True)
     rating = models.IntegerField(default=4)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -96,6 +96,7 @@ class CartProduct(models.Model):
     item = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
+
     def __str__(self):
         return f"{self.quantity} of {self.item.name}"
 
@@ -110,8 +111,8 @@ class CartProduct(models.Model):
 
     def get_final_price(self):
         if self.item.discount_price:
-            return self.get_total_discount_item_price()
-        return self.get_total_item_price()
+            return round(self.get_total_discount_item_price(),2)
+        return round(self.get_total_item_price(),2)
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

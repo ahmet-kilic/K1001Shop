@@ -396,13 +396,65 @@
   </script>
 
 
-  <script>
-    ClassicEditor
-        .create( document.querySelector( '#review_text' ) )
-        .catch( error => {
-            console.error( error );
-        } );
-</script>
+  		<script>ClassicEditor
+				.create( document.querySelector( '#review_text' ), {
+					
+				toolbar: {
+					items: [
+						'heading',
+						'|',
+						'bold',
+						'italic',
+						'link',
+						'bulletedList',
+						'numberedList',
+						'|',
+						'outdent',
+						'indent',
+						'|',
+						'imageUpload',
+						'blockQuote',
+						'insertTable',
+						'undo',
+						'redo'
+					]
+				},
+				language: 'en',
+				image: {
+					toolbar: [
+						'imageTextAlternative',
+						'imageStyle:inline',
+						'imageStyle:block',
+						'imageStyle:side'
+					]
+				},
+				table: {
+					contentToolbar: [
+						'tableColumn',
+						'tableRow',
+						'mergeTableCells'
+					]
+				},
+					licenseKey: '',
+					
+					
+					
+				} )
+				.then( editor => {
+					window.editor = editor;
+			
+					
+					
+					
+				} )
+				.catch( error => {
+					console.error( 'Oops, something went wrong!' );
+					console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+					console.warn( 'Build id: 24wli16rgyf0-unt8fr6ckh47' );
+					console.error( error );
+				} );
+		</script>
+
 
 
 

@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import View
 from .models import CartProduct, Category, Product, Address, Order, Review
-from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, ContactForm
+from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, ContactForm, RefundForm
 from cities_light.models import SubRegion
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -279,5 +279,38 @@ class CheckoutView(LoginRequiredMixin, View):
 
         except:
             return render(request, 'checkout.html')
+
+
+class OrdersView(LoginRequiredMixin, View):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user, ordered=True)
+        context = {
+            'orders': orders
+        }
+        return render(request, 'orders.html', context)
+
+class RefundView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        form = RefundForm()
+        order = get_object_or_404(Order, pk=pk)
+        return render(request, 'refund.html', {'form': form, 'order': order})
+
+    def post(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        order = get_object_or_404(Order, pk=pk)
+        form = RefundForm(request.POST)
+        if form.is_valid():
+            refund = form.save(commit=False)
+            refund.order = order
+            refund.save()
+            order.refund_requested = True
+            order.save()
+            messages.success(request, 'Refund requested.')
+            return redirect('orders')
+        return render(request, 'refund.html', {'form': form, 'order': order})
+
+
+
 
 # Create your views here.
