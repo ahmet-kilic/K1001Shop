@@ -87,38 +87,69 @@
             
               <hr>
 
-        <div class="frb-group">
-					
-          {% for card in cards %}
-					<div class="frb frb-primary">
-						<input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="1">
-						<label for="radio-button-{{card.pk}}">
-							<span class="frb-title">**** **** **** {{ card.number|slice:"15:21" }}</span> </br>
-							<span class="frb-description"> Expiry Date: {{ card.expiry }}</span>
-						</label>
-					</div>
-          {% endfor %}
-					
-				</div>
+              <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link active" id="nav-newcard-tab" data-toggle="tab" href="#nav-newcard" role="tab" aria-controls="nav-newcard">New Card</a>
+                  <a class="nav-item nav-link" id="nav-cards-tab" data-toggle="tab" href="#nav-cards" role="tab" aria-controls="nav-cards">Saved Cards</a>
+                  <a class="nav-item nav-link" id="nav-wallet-tab" data-toggle="tab" href="#nav-wallet" role="tab" aria-controls="nav-wallet">Wallet Balance</a>
+                </div>
+              </nav>
+              <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-newcard" role="tabpanel" aria-labelledby="nav-newcard-tab">
+                  <div class="card-wrapper mt-5"></div>
+
+                  <div class="form-container active">
+                      <input placeholder="Card number" type="tel" name="number" class="mt-3 form-control unknown jp-card-invalid" required>
+                      <input placeholder="Name on card" type="text" name="name" class="mt-2 form-control jp-card-valid" required>
+                      <input placeholder="MM/YY" type="tel" name="expiry" class="mt-2 form-control" required>
+                      <input placeholder="CVC" type="number" name="cvc" class="mt-2 form-control" required>
+                  </div>
+
+                
+                  <div class="custom-control custom-checkbox mt-2">
+                    <input type="checkbox" class="custom-control-input" id="save-info">
+                    <label class="custom-control-label" for="save-info">Save this Card</label>
+                  </div>
+                  <hr class="mb-4">
+                  <button class="btn btn-primary btn-lg btn-block" name="newcard" type="submit">Checkout</button>
+
+                </div>
+                <div class="tab-pane fade" id="nav-cards" role="tabpanel" aria-labelledby="nav-cards-tab">
+                    <div class="frb-group">
+                
+                      {% for card in cards %}
+                      <div class="frb frb-primary">
+                        <input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="1">
+                        <label for="radio-button-{{card.pk}}">
+                          <span class="frb-title">**** **** **** {{ card.number|slice:"15:21" }}</span>
+                          <i class="float-right far fa-credit-card fa-3x mr-3 mt-2"></i>
+                          </br>
+                          <span class="frb-description"> Expiry Date: {{ card.expiry }}</span>
+                        </label>
+                      </div>
+                      {% endfor %}
+                      
+                    </div>
+
+                  <hr class="mb-4">
+                  <button class="btn btn-primary btn-lg btn-block" name="savedcard" type="submit">Checkout</button>
+
+
+                </div>
+                <div class="tab-pane fade" id="nav-wallet" role="tabpanel" aria-labelledby="nav-wallet-tab">
+                  wallet
+
+                  <hr class="mb-4">
+                  <button class="btn btn-primary btn-lg btn-block" name="wallet" type="submit">Checkout</button>
+
+
+                </div>
+              </div>
+
+              
 			<!-- CHECKBOX BUTTON BLOCK -->
 
-              <div class="card-wrapper"></div>
-
-              <div class="form-container active">
-                  <input placeholder="Card number" type="tel" name="number" class="mt-3 form-control unknown jp-card-invalid" required>
-                  <input placeholder="Name on card" type="text" name="name" class="mt-2 form-control jp-card-valid" required>
-                  <input placeholder="MM/YY" type="tel" name="expiry" class="mt-2 form-control" required>
-                  <input placeholder="CVC" type="number" name="cvc" class="mt-2 form-control" required>
-              </div>
-
-            
-              <div class="custom-control custom-checkbox mt-2">
-                <input type="checkbox" class="custom-control-input" id="save-info">
-                <label class="custom-control-label" for="save-info">Save this Card</label>
-              </div>
-
-              <hr class="mb-4">
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Checkout</button>
+              
               {% else %}
               <div> You currently do not have any saved addresses. </div>
               <div><a href="{% url 'add_address' %}" class="btn btn-primary"> Add an Address</a></div>
@@ -156,7 +187,7 @@
             {% endfor %}
             
             <li class="list-group-item d-flex justify-content-between">
-              <span>Total (USD)</span>
+              <span>Total</span>
               <strong>₺ {{ order.get_total }}</strong>
             </li>
           </ul>
