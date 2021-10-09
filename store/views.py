@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import View
-from .models import CartProduct, Category, Product, Address, Order, Review
+from .models import CartProduct, Category, Product, Address, Order, Review, Card
 from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, ContactForm, RefundForm
 from cities_light.models import SubRegion
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -270,15 +270,25 @@ class AjaxReviewsView(View):
 
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, request):
-        try:
-            order = Order.objects.get(user=request.user, ordered=False)
-            context = {
-                'order' : order,
-            }
-            return render(request, 'checkout.html', context)
 
-        except:
-            return render(request, 'checkout.html')
+        order = Order.objects.get(user=request.user, ordered=False)
+        adresses = Address.objects.filter(user=request.user)
+        cards = Card.objects.filter(user=request.user)
+        context = {
+            'order' : order,
+            'addresses': adresses,
+            'cards': cards
+        }
+        return render(request, 'checkout.html', context)
+
+    def post(self, request):
+        print(request.POST.get('number'))
+        print(request.POST.get('name'))
+        print(request.POST.get('cvc'))
+        print(request.POST.get('expiry'))
+
+        return redirect('checkout')
+
 
 
 class OrdersView(LoginRequiredMixin, View):

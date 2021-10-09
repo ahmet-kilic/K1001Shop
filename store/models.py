@@ -151,11 +151,12 @@ class Refund(models.Model):
         return f"{self.pk}"
 
 
-class Payment(models.Model):
-    stripe_charge_id = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    amount = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+class Card(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(max_length=60)
+    number = models.CharField(max_length=20, default="0000 0000 0000 0000")
+    cvc = models.CharField(max_length=20)
+    expiry = models.CharField(max_length=15)
 
     def __str__(self):
         return self.user.username
