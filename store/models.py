@@ -84,7 +84,7 @@ class Address(models.Model):
     zip = models.CharField(max_length=50)
     
     def __str__(self):
-        return f' {self.name} of {self.user.username}'
+        return f' {self.name}, {self.address}, {self.region} / {self.subregion}'
         
     class Meta:
         verbose_name_plural = "Addresses"
@@ -142,6 +142,9 @@ class Balance(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
+    def __str__(self):
+        return f"Balance {self.balance} of user {self.user}"
+
 class Refund(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     reason = models.TextField()
@@ -159,4 +162,4 @@ class Card(models.Model):
     expiry = models.CharField(max_length=15)
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username}'s card with number {self.number}"

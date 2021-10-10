@@ -21,7 +21,7 @@ import sys
 sys.path.append('../store')
   
 # importing
-from store.models import Order
+from store.models import Order, Balance
 
 # TODO Add Login Required Mixins
 
@@ -43,6 +43,8 @@ class SignUpView(View):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            wallet = Balance(user=user, balance=0)
+            wallet.save()
             auth_login(request,user)
             return redirect('home')
         return render(request, 'signup.html', {'form': form})

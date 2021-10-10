@@ -1,9 +1,11 @@
+import re
 from typing import Type
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Address, Refund, Review, Card
 from cities_light.models import City, Region, SubRegion
+from django.utils import timezone
 
 class UserModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -11,6 +13,7 @@ class UserModelChoiceField(forms.ModelChoiceField):
 
 class ProductQuantityForm(forms.Form):
     quantity = forms.IntegerField(min_value=1)
+
 
 class ProductIDQuantityForm(forms.Form):
     product_id = forms.IntegerField(widget=forms.HiddenInput())
@@ -33,9 +36,52 @@ class RefundForm(forms.ModelForm):
         fields = ('reason',)
 
 class CardForm(forms.ModelForm):
+    name = forms.CharField(max_length=60, required=True)
+    number = forms.CharField(max_length=20, required=True)
+    cvc = forms.CharField(max_length=20, required=True)
+    expiry = forms.CharField(max_length=15, required=True)
+
     class Meta:
         model = Card
         fields = ('name', 'number', 'cvc', 'expiry')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        number = cleaned_data.get('number')
+        cvc = cleaned_data.get('cvc')
+        expiry = cleaned_data.get('expiry')
+
+        if number is None:
+            self.add_error('number', "Correctly enter all numbers.")
+        else:                        
+            number_list = number.split(" ")
+            if len(number_list) != 4:
+                self.add_error('number', "Correctly enter all numbers.")
+            else:
+                for i in number_list:
+                    if len(i) != 4:
+                        self.add_error('number', "Correctly enter all numbers.")
+        if cvc is None:
+            self.add_error('cvc', "Correctly enter cvc.")
+        elif len(cvc) < 3:
+            self.add_error('cvc', "Correctly enter cvc.")
+        if expiry is None:
+            self.add_error('expiry', "Correctly enter expiry date.")
+        else:
+            now = timezone.now()
+            month = now.month
+            year = now.year
+            expiry_list = expiry.split(" ")
+            if len(expiry_list) < 3:
+                self.add_error('expiry', "Correctly enter expiry date.") 
+            else:           
+                if year > int(expiry_list[2]):
+                    self.add_error('expiry', "Your card is expired.")
+                if year == int(expiry_list[2]) and month > int(expiry_list[0]):
+                    self.add_error('expiry', "Your card is expired.")
+
+
+        
 
 class AddressForm(forms.ModelForm):
     name = forms.CharField(max_length=50, required=True)

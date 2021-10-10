@@ -75,15 +75,16 @@
               <!--address-->
 
               {% if addresses %}
+              <div class="form-group">
               <label for="address-select" class="">Address</label>
-              <select class="form-control" id="address-select">
+              <select class="form-control" name="address" id="address-select">
                 {% for a in addresses %}
-                <option value="{{ address.pk }}">
-                <h5> {{ a.name }} </h5>
-                <p> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} </p> 
+                <option value="{{ a.pk }}">
+                  {{ a.name }} {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }}
                 </option>
                 {% endfor %}
               </select>
+              </div>
             
               <hr>
 
@@ -99,15 +100,15 @@
                   <div class="card-wrapper mt-5"></div>
 
                   <div class="form-container active">
-                      <input placeholder="Card number" type="tel" name="number" class="mt-3 form-control unknown jp-card-invalid" required>
-                      <input placeholder="Name on card" type="text" name="name" class="mt-2 form-control jp-card-valid" required>
-                      <input placeholder="MM/YY" type="tel" name="expiry" class="mt-2 form-control" required>
-                      <input placeholder="CVC" type="number" name="cvc" class="mt-2 form-control" required>
+                      <input placeholder="Card number" type="tel" name="number" class="mt-3 form-control unknown jp-card-invalid">
+                      <input placeholder="Name on card" type="text" name="name" class="mt-2 form-control jp-card-valid">
+                      <input placeholder="MM/YY" type="tel" name="expiry" class="mt-2 form-control">
+                      <input placeholder="CVC" type="number" name="cvc" class="mt-2 form-control">
                   </div>
 
                 
                   <div class="custom-control custom-checkbox mt-2">
-                    <input type="checkbox" class="custom-control-input" id="save-info">
+                    <input type="checkbox" class="custom-control-input" id="save-info" name="save">
                     <label class="custom-control-label" for="save-info">Save this Card</label>
                   </div>
                   <hr class="mb-4">
@@ -115,11 +116,12 @@
 
                 </div>
                 <div class="tab-pane fade" id="nav-cards" role="tabpanel" aria-labelledby="nav-cards-tab">
+                {% if cards %}
                     <div class="frb-group">
                 
                       {% for card in cards %}
                       <div class="frb frb-primary">
-                        <input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="1">
+                        <input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="{{card.pk}}">
                         <label for="radio-button-{{card.pk}}">
                           <span class="frb-title">**** **** **** {{ card.number|slice:"15:21" }}</span>
                           <i class="float-right far fa-credit-card fa-3x mr-3 mt-2"></i>
@@ -129,19 +131,25 @@
                       </div>
                       {% endfor %}
                       
+                      
                     </div>
 
                   <hr class="mb-4">
                   <button class="btn btn-primary btn-lg btn-block" name="savedcard" type="submit">Checkout</button>
-
+                {% else %}
+                <div> You do not have any saved cards. Please try other options. </div>
+                {% endif %}                  
 
                 </div>
                 <div class="tab-pane fade" id="nav-wallet" role="tabpanel" aria-labelledby="nav-wallet-tab">
+                  {% if wallet.balance > order.get_total  %}
                   wallet
-
                   <hr class="mb-4">
                   <button class="btn btn-primary btn-lg btn-block" name="wallet" type="submit">Checkout</button>
+                  {% else %}
+                  <div> You do not have enough balance to purchase this order. Please try other options.</div>
 
+                  {% endif %}
 
                 </div>
               </div>
