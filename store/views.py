@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import View
 from .models import CartProduct, Category, Product, Address, Order, Review, Card, Balance
-from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, ContactForm, RefundForm, CardForm
+from .forms import AddressForm, ProductQuantityForm, ProductIDQuantityForm, ReviewForm, BalanceForm, ContactForm, RefundForm, CardForm
 from cities_light.models import SubRegion
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.core.mail import send_mail, BadHeaderError
 from django.db.models import Q, Avg
+import decimal
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -268,31 +269,35 @@ class AjaxReviewsView(View):
         return render(request, 'ajax_reviews.html', { 'reviews': reviews})
             
 
-def order_checkout(order):
-    products = order.items.all()
-    for product in products:
-        if product.quantity > product.item.stock:
-            return product.item
-
-    for product in products:
-        product.item.stock -= product.quantity
-        product.item.save()
-    order.ordered = True
-    order.save()
-    return "success"
-
 class CheckoutView(LoginRequiredMixin, View):
+    def order_checkout(self, order, request):
+        products = order.items.all()
+        for product in products:
+            if product.quantity > product.item.stock:
+                return product.item
+
+        for product in products:
+            product.item.stock -= product.quantity
+            product.item.save()
+        order.ordered = True
+        order.save()
+        request.session['items_total'] = 0
+        return "success"
+
     def get(self, request):
 
         order = Order.objects.get(user=request.user, ordered=False)
         adresses = Address.objects.filter(user=request.user)
         cards = Card.objects.filter(user=request.user)
         wallet = Balance.objects.get(user=request.user)
+
+        balance_left = round(float(wallet.balance) - order.get_total(),2)
         context = {
             'order' : order,
             'addresses': adresses,
             'cards': cards,
             'wallet': wallet,
+            'balance_left': balance_left
         }
         return render(request, 'checkout.html', context)
 
@@ -315,16 +320,27 @@ class CheckoutView(LoginRequiredMixin, View):
             if 'radio-button' not in request.POST:
                 messages.error(request, "Please choose a card.")
                 return redirect('checkout')
+        elif 'deletecard' in request.POST:
+            if 'radio-button' not in request.POST:
+                messages.error(request, "Please choose a card.")
+                return redirect('checkout')
+            card_id = request.POST.get('radio-button')
+            Card.objects.get(id=card_id).delete()
+            messages.success(request, "Successfully deleted card.")
+            return redirect('checkout')
         else:
             wallet = Balance.objects.get(user=user)
             order_total = order.get_total()
             if wallet.balance < order_total:
                 messages.error(request, "Insufficient balance.")
                 return redirect('checkout')
-            wallet.balance -= order_total
-            wallet.save()
 
-        stat = order_checkout(order)
+            wallet.balance = decimal.Decimal(str(round(float(wallet.balance) - order_total,2)))
+            wallet.save()
+            self.request.session['balance'] = str(wallet.balance)
+
+
+        stat = self.order_checkout(order, request)
         if not isinstance(stat, str):
             messages.error(request, f"Quantity of {stat.name} exceeds stock, please review your cart.")
             return redirect('checkout')
@@ -364,6 +380,64 @@ class RefundView(LoginRequiredMixin, View):
             messages.success(request, 'Refund requested.')
             return redirect('orders')
         return render(request, 'refund.html', {'form': form, 'order': order})
+
+
+class BalanceView(LoginRequiredMixin, View):
+    def get(self, request):
+
+        form = BalanceForm()
+        cards = Card.objects.filter(user=request.user)
+        wallet = Balance.objects.get(user=request.user)
+        context = {
+            'form': form,
+            'cards': cards,
+            'wallet': wallet,
+        }
+        return render(request, 'wallet.html', context)
+
+    def post(self, request):
+        user = request.user
+        valid = False
+        if 'newcard' in request.POST:
+            form = CardForm(request.POST)
+            if form.is_valid():
+                if 'save' in request.POST:
+                    card = form.save(commit=False)
+                    card.user = request.user
+                    card.save()
+                valid = True
+            else:
+                messages.error(request, "Invalid card")
+        elif 'savedcard' in request.POST:
+            if 'radio-button' not in request.POST:
+                messages.error(request, "Please choose a card.")
+            else:
+                valid = True
+        elif 'deletecard' in request.POST:
+            if 'radio-button' not in request.POST:
+                messages.error(request, "Please choose a card.")
+            card_id = request.POST.get('radio-button')
+            Card.objects.get(id=card_id).delete()
+            messages.success(request, "Successfully deleted card.")
+            return redirect('wallet')
+
+        wallet = Balance.objects.get(user=user)
+        balance_form = BalanceForm(request.POST)
+        if balance_form.is_valid() and valid:
+            wallet.balance += balance_form.cleaned_data['amount']
+            wallet.balance = decimal.Decimal(str(round(float(wallet.balance),2)))
+
+            wallet.save()
+            self.request.session['balance'] = str(wallet.balance)
+
+
+        cards = Card.objects.filter(user=request.user)
+        context = {
+            'form': balance_form,
+            'cards': cards,
+            'wallet': wallet,
+        }
+        return render(request, 'wallet.html', context)
 
 
 

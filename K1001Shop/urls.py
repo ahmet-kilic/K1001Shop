@@ -66,6 +66,7 @@ urlpatterns = [
     path('checkout/', views.CheckoutView.as_view(), name='checkout'),
     path('orders/', views.OrdersView.as_view(), name='orders'),
     path('orders/refund/<int:pk>/', views.RefundView.as_view(), name='refund'),
+    path('wallet/', views.BalanceView.as_view(), name='wallet'),
     path('<slug:slug>/', views.HomeView.as_view(), name='category_home' ), # Problem in here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

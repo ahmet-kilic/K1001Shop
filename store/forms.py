@@ -25,6 +25,9 @@ class ContactForm(forms.Form):
 	email_address = forms.EmailField(max_length = 150)
 	message = forms.CharField(widget = forms.Textarea, max_length = 2000)
 
+class BalanceForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
@@ -73,11 +76,13 @@ class CardForm(forms.ModelForm):
             year = now.year
             expiry_list = expiry.split(" ")
             if len(expiry_list) < 3:
+                print("ss")
                 self.add_error('expiry', "Correctly enter expiry date.") 
-            else:           
-                if year > int(expiry_list[2]):
+            else:
+                card_year = int("20" + expiry_list[2])           
+                if year > card_year:
                     self.add_error('expiry', "Your card is expired.")
-                if year == int(expiry_list[2]) and month > int(expiry_list[0]):
+                if year == card_year and month > int(expiry_list[0]):
                     self.add_error('expiry', "Your card is expired.")
 
 

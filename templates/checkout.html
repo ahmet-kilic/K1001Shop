@@ -133,6 +133,7 @@
                       
                       
                     </div>
+                  <button class="btn btn-secondary" name="deletecard" type="submit">Delete Selected Card</button>
 
                   <hr class="mb-4">
                   <button class="btn btn-primary btn-lg btn-block" name="savedcard" type="submit">Checkout</button>
@@ -143,7 +144,22 @@
                 </div>
                 <div class="tab-pane fade" id="nav-wallet" role="tabpanel" aria-labelledby="nav-wallet-tab">
                   {% if wallet.balance > order.get_total  %}
-                  wallet
+                  <table class="table table-sm table-borderless">
+                    <tbody>
+                      <tr>
+                        <td><h5>Current Balance: </h5></td>
+                        <td><h5>₺{{ wallet.balance }}</h5> </td>
+                      </tr>
+                      <tr>
+                        <td><h5>Purchase:</h5></td>
+                        <td><h5> -₺{{ order.get_total }}</h5></td>
+                      </tr>
+                      <tr style="border-top: thin solid">
+                        <td><h5>Balance After Purchase:</h5></td>
+                        <td><h5>₺{{ balance_left }}</h5></td>
+                      </tr>
+                    </tbody>
+                  </table>
                   <hr class="mb-4">
                   <button class="btn btn-primary btn-lg btn-block" name="wallet" type="submit">Checkout</button>
                   {% else %}

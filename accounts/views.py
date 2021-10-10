@@ -36,6 +36,9 @@ class CustomLoginView(LoginView):
             order = None
             self.request.session['items_total'] = 0
 
+        wallet = Balance.objects.get(user=form.get_user())
+        self.request.session['balance'] = str(wallet.balance)
+
         return HttpResponseRedirect(self.get_success_url())
 
 class SignUpView(View):

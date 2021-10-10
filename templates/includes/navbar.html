@@ -33,6 +33,12 @@
         {% if user.is_authenticated %}
           <ul class="navbar-nav nav-flex-icons">
             <li class="nav-item">
+              <a class="nav-link waves-effect" href="{% url 'wallet' %}">
+                <i class="fas fa-wallet"></i>
+                <span class="clearfix d-none d-sm-inline-block"> ₺ {{ request.session.balance }} </span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link waves-effect" href="{% url 'cart' %}">
                 <span class="badge red z-depth-1 mr-1"> {{ request.session.items_total }} </span>
                 <i class="fas fa-shopping-cart"></i>
