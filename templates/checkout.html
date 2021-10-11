@@ -2,7 +2,6 @@
 {% extends 'base.html' %}
 
 {% load static %}
-  <link href="{% static 'css/radio_card.css' %}" rel="stylesheet">
 
 
 {% block content %}
@@ -11,6 +10,9 @@
   <!-- Navbar -->
   {% include 'includes/navbar.html' %}
   <!-- Navbar -->
+  <link href="{% static 'css/radio_card.css' %}" rel="stylesheet">
+  <link href="{% static 'css/card.css' %}" rel="stylesheet">
+
 
   <!--Main layout-->
   <main>
@@ -166,7 +168,7 @@
                   <hr class="mb-4">
                   <button class="btn btn-primary btn-lg btn-block" name="wallet" type="submit">Checkout</button>
                   {% else %}
-                  <div> You do not have enough balance to purchase this order. Please try other options.</div>
+                  <div class="mt-3"> You do not have enough balance to purchase this order. Please try other options.</div>
 
                   {% endif %}
 

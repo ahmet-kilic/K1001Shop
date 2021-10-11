@@ -84,7 +84,7 @@ class Address(models.Model):
     zip = models.CharField(max_length=50)
     
     def __str__(self):
-        return f' {self.name}, {self.address}, {self.region} / {self.subregion}'
+        return f' {self.name}, {self.address}, {self.subregion}'
         
     class Meta:
         verbose_name_plural = "Addresses"
@@ -101,10 +101,10 @@ class CartProduct(models.Model):
         return f"{self.quantity} of {self.item.name}"
 
     def get_total_item_price(self):
-        return self.quantity * self.item.price
+        return round(self.quantity * self.item.price,2)
 
     def get_total_discount_item_price(self):
-        return self.quantity * self.item.discount_price
+        return round(self.quantity * self.item.discount_price,2)
 
     def get_amount_saved(self):
         return self.get_total_item_price() - self.get_total_discount_item_price()

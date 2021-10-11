@@ -2,10 +2,13 @@
 
 {% load humanize %}
 
+{% load static %}
 
 {% block content %}
 
 {% include "includes/navbar.html" %}
+
+    <link href="{% static 'css/rate.css' %}" rel="stylesheet">
 
   <!--Main layout-->
   <main class="mt-5 pt-4">

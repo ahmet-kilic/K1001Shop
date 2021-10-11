@@ -1,19 +1,166 @@
 {% extends 'base.html' %}
+{% load static %}
 
 <title>My account</title>
 
 {% block content %}
 {% include 'includes/navbar.html' %}
-  <div class="row">
-    <div class="col-sm-10">
-    <ul class="mr-auto">
-      <h1> Your Settings </h1>
-      <hr width="%500">
-      <h5> First Name: {{ user.first_name }}</h5>
-      <h5> Last Name: {{ user.last_name }}</h5>
-      <h5> Email: {{ user.email }}</h5>
-      <a href="{% url 'change_settings' %}" class="btn">Change Settings</a>
-    </ul>
+
+  <link href="{% static 'css/radio_card.css' %}" rel="stylesheet">
+
+
+  <!-- New Profile page -->
+  
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action" id="list-myaccount-list" data-toggle="tab" href="#list-myaccount" role="tab" aria-controls="myaccount"> Profile </a>
+        <a class="list-group-item list-group-item-action" id="list-adrs-list" data-toggle="tab" href="#list-adrs" role="tab" aria-controls="adrs"> Addresses </a>
+        <a class="list-group-item list-group-item-action" id="list-cards-list" data-toggle="tab" href="#list-cards" role="tab" aria-controls="cards"> Cards </a>              
+      </div> 
+		</div>
+		<div class="col-md-9">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade" id="list-myaccount" role="tabpanel" aria-labelledby="list-myaccount-list"> 
+                  <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Your Profile</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <table class="table table-sm table-borderless">
+                              <tbody>
+                                <tr>
+                                  <td><h5>User Name: </h5></td>
+                                  <td><h5>{{ user.username }}</h5> </td>
+                                </tr>
+                                <tr>
+                                  <td><h5>First Name:</h5></td>
+                                  <td><h5>{{ user.first_name }}</h5></td>
+                                </tr>
+                                <tr>
+                                  <td><h5>Last Name:</h5></td>
+                                  <td><h5>{{ user.last_name }}</h5></td>
+                                </tr>
+                                <tr>
+                                  <td><h5>Email:</h5></td>
+                                  <td><h5>{{ user.email }}</h5></td>
+                                </tr>
+
+                              </tbody>
+                            </table>
+                            <hr>
+                                  <a href="{% url 'change_settings' %}" class="btn btn-primary">Change Settings</a>
+
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="list-adrs" role="tabpanel" aria-labelledby="list-adrs-list"> 
+                  <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Your Addresses</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <table class="table table-sm table-borderless">
+                              <tbody>
+                                {% for a in addresses %}
+                                <tr>
+                                  <td><h5> {{ a.name }} </h5> <h6> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} </h6></td>
+                                  <td><h5><a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">
+                                  <i class="fas fa-trash" class="align-middle"></i>
+                                  </a></h5> 
+                                  </td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                            <hr>
+                            <a href="{% url 'add_address' %}" class="btn btn-primary">Add a Shipping Address</a>
+
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="list-cards" role="tabpanel" aria-labelledby="list-cards-list"> 
+            
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Your Addresses</h4>
+                                <hr>
+                            </div>
+                        </div>
+                      {% if cards %}
+                        <div class="frb-group">
+                    
+                          {% for card in cards %}
+                          <div class="frb frb-primary">
+                            <input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="{{card.pk}}">
+                            <label for="radio-button-{{card.pk}}">
+                              <span class="frb-title">**** **** **** {{ card.number|slice:"15:21" }}</span>
+                              <i class="float-right far fa-credit-card fa-3x mr-3 mt-2"></i>
+                              </br>
+                              <span class="frb-description"> Expiry Date: {{ card.expiry }}</span>
+                            </label>
+                          </div>
+                          {% endfor %}
+                          
+                          
+                        </div>
+                        <hr>
+                        <button class="btn btn-secondary" name="deletecard" type="submit">Delete Selected Card</button>
+                        <a href="#" class="btn btn-primary">Add a New Card</a>
+                        {% else %}
+                        <div> You do not have any saved cards.</div>
+                        {% endif %}                  
+                      </div>
+
+                    </div>
+                  
+
+              
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+</div>
+
+  <script>
+    $('a[data-toggle="tab"]').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+    });
+
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+        var id = $(e.target).attr("href");
+        localStorage.setItem('selectedTab', id)
+    });
+
+    var selectedTab = localStorage.getItem('selectedTab');
+    if (selectedTab != null) {
+        $('a[data-toggle="tab"][href="' + selectedTab + '"]').tab('show');
+    }
+
+  </script>
+
+
 {% endblock %}

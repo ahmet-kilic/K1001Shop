@@ -213,7 +213,7 @@ class AddAddressView(LoginRequiredMixin, View):
             address = form.save(commit=False)
             address.user = user
             address.save()
-            return redirect('addresses')
+            return redirect('my_account')
         return render(request, 'add_address.html', {'form': form , 'user': user})
 
     def get(self, request):
@@ -225,7 +225,7 @@ class DeleteAddressView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
         Address.objects.filter(id=id).delete()
-        return redirect('addresses')
+        return redirect('my_account')
 
 class LoadSubregionsView(LoginRequiredMixin, View):
     def get(self, request):
@@ -270,7 +270,7 @@ class AjaxReviewsView(View):
             
 
 class CheckoutView(LoginRequiredMixin, View):
-    def order_checkout(self, order, request):
+    def order_checkout(self, request, order, address):
         products = order.items.all()
         for product in products:
             if product.quantity > product.item.stock:
@@ -280,6 +280,7 @@ class CheckoutView(LoginRequiredMixin, View):
             product.item.stock -= product.quantity
             product.item.save()
         order.ordered = True
+        order.shipping_address = address
         order.save()
         request.session['items_total'] = 0
         return "success"
@@ -339,8 +340,9 @@ class CheckoutView(LoginRequiredMixin, View):
             wallet.save()
             self.request.session['balance'] = str(wallet.balance)
 
-
-        stat = self.order_checkout(order, request)
+        address_id = int(request.POST.get('address'))
+        address = Address.objects.get(id=address_id)
+        stat = self.order_checkout( request, order, address)
         if not isinstance(stat, str):
             messages.error(request, f"Quantity of {stat.name} exceeds stock, please review your cart.")
             return redirect('checkout')
@@ -429,6 +431,7 @@ class BalanceView(LoginRequiredMixin, View):
 
             wallet.save()
             self.request.session['balance'] = str(wallet.balance)
+            messages.success(request, "Successfully loaded balance.")
 
 
         cards = Card.objects.filter(user=request.user)

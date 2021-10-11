@@ -21,7 +21,7 @@ import sys
 sys.path.append('../store')
   
 # importing
-from store.models import Order, Balance
+from store.models import Order, Balance, Address, Card
 
 # TODO Add Login Required Mixins
 
@@ -49,6 +49,8 @@ class SignUpView(View):
             wallet = Balance(user=user, balance=0)
             wallet.save()
             auth_login(request,user)
+            self.request.session['items_total'] = 0
+            self.request.session['balance'] = 0
             return redirect('home')
         return render(request, 'signup.html', {'form': form})
 
@@ -74,8 +76,12 @@ class SettingsChangeView(LoginRequiredMixin, View):
 class AccountView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
+        addresses = Address.objects.filter(user=user)
+        cards = Card.objects.filter(user=user)
         context = {
-            'user': user
+            'user': user,
+            'addresses': addresses,
+            'cards': cards
         }
         return render(request, 'my_account.html', context)
 
