@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from django.core.mail import send_mail, BadHeaderError
 from django.db.models import Q, Avg
 import decimal
+from .mba import get_associated
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -57,6 +58,8 @@ class ProductView(View):
         product = get_object_or_404(Product, slug=slug)
         reviews = Review.objects.filter(product=product)
 
+        rec_products = get_associated(product.id)
+
         try:
             if request.user.is_authenticated:
                 user_review = reviews.get(user=request.user)
@@ -100,6 +103,7 @@ class ProductView(View):
             'page_count': paginator.num_pages,
             'best_rated': best_rated,
             'purchased': purchased,
+            'rec_products': rec_products
         }
         return render(request, 'product.html', context)
 

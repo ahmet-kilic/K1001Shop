@@ -289,54 +289,108 @@
       <section class="text-center mb-4">
         <div class="row wow fadeIn">
 
-{% for item in best_rated %}
-<div class="col-lg-3 col-md-6 mb-4">
+          {% for item in best_rated %}
+          <div class="col-lg-3 col-md-6 mb-4">
 
-    <div class="card" style="width: 250px; height: 350px">
+              <div class="card" style="width: 250px; height: 350px">
 
-    <div class="view overlay">
-        {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
-        <img style="height: 100%; width: 100%; object-fit: contain" src="{{ item.image.url }}" class="card-img-top">
-        <a href="{{ item.get_absolute_url }}">
-        <div class="mask rgba-white-slight"></div>
-        </a>
-    </div>
+              <div class="view overlay">
+                  {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
+                  <img style="height: 100%; width: 100%; object-fit: contain" src="{{ item.image.url }}" class="card-img-top">
+                  <a href="{{ item.get_absolute_url }}">
+                  <div class="mask rgba-white-slight"></div>
+                  </a>
+              </div>
 
-    <div class="card-body text-center">
-        <h5>
-        <strong>
-            <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.name }}
-            </a>
-        </strong>
-        </h5>
+              <div class="card-body text-center">
+                  <h5>
+                  <strong>
+                      <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.name }}
+                      </a>
+                  </strong>
+                  </h5>
 
-        <h4 class="font-weight-bold blue-text">
-        <strong>
-        {% if item.discount_price %}
-        <span class="mr-1">
-            <del>₺{{ item.price }}</del>
-        </span>
-        <span>₺{{ item.discount_price }}</span>
-        {% else %}
-        <span>₺{{ item.price }}</span>
-        {% endif %}
-        </strong>
-        </h4>
-        {% if item.count_reviews %}
-        <h5> <i class="fas fa-star" style="color:	orange"></i> 
-        {{ item.get_rating }} - {{ item.count_reviews }} {% if item.count_reviews == 1 %} Review {% else %} Reviews {% endif %}               
-        </h5>
-        {% endif %}
+                  <h4 class="font-weight-bold blue-text">
+                  <strong>
+                  {% if item.discount_price %}
+                  <span class="mr-1">
+                      <del>₺{{ item.price }}</del>
+                  </span>
+                  <span>₺{{ item.discount_price }}</span>
+                  {% else %}
+                  <span>₺{{ item.price }}</span>
+                  {% endif %}
+                  </strong>
+                  </h4>
+                  {% if item.count_reviews %}
+                  <h5> <i class="fas fa-star" style="color:	orange"></i> 
+                  {{ item.get_rating }} - {{ item.count_reviews }} {% if item.count_reviews == 1 %} Review {% else %} Reviews {% endif %}               
+                  </h5>
+                  {% endif %}
 
-    </div>
+              </div>
 
-    </div>
+              </div>
 
-</div>
-{% endfor %}
-</div>
+          </div>
+          {% endfor %}
 
+        </div>
 
+      </section>
+
+      <h2 class="text-center"> Others Also Purchased </h2>      
+
+      <!--Grid row-->
+      <section class="text-center mb-4">
+        <div class="row wow fadeIn">
+
+          {% for item in rec_products %}
+          <div class="col-lg-3 col-md-6 mb-4">
+
+              <div class="card" style="width: 250px; height: 350px">
+
+              <div class="view overlay">
+                  {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"> {% endcomment %}
+                  <img style="height: 100%; width: 100%; object-fit: contain" src="{{ item.image.url }}" class="card-img-top">
+                  <a href="{{ item.get_absolute_url }}">
+                  <div class="mask rgba-white-slight"></div>
+                  </a>
+              </div>
+
+              <div class="card-body text-center">
+                  <h5>
+                  <strong>
+                      <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.name }}
+                      </a>
+                  </strong>
+                  </h5>
+
+                  <h4 class="font-weight-bold blue-text">
+                  <strong>
+                  {% if item.discount_price %}
+                  <span class="mr-1">
+                      <del>₺{{ item.price }}</del>
+                  </span>
+                  <span>₺{{ item.discount_price }}</span>
+                  {% else %}
+                  <span>₺{{ item.price }}</span>
+                  {% endif %}
+                  </strong>
+                  </h4>
+                  {% if item.count_reviews %}
+                  <h5> <i class="fas fa-star" style="color:	orange"></i> 
+                  {{ item.get_rating }} - {{ item.count_reviews }} {% if item.count_reviews == 1 %} Review {% else %} Reviews {% endif %}               
+                  </h5>
+                  {% endif %}
+
+              </div>
+
+              </div>
+
+          </div>
+          {% endfor %}
+        </div>
       </section>
 
     </div>
