@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+<title>Change Settings</title>
+
+{% load static %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+<link href="{% static 'css/card.css' %}" rel="stylesheet">
+
+
+<body class="grey lighten-3">
+    <div class="card w-50 mx-auto">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 w-25 mx-auto">
+                    <h4>Add a New Card.</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 w-25">
+                        <form method="post" novalidate>
+                        {% csrf_token %}
+                            <div class="card-wrapper mt-5"></div>
+
+                            <div class="form-container active">
+                                <input placeholder="Card number" type="tel" name="number" class="mt-3 form-control unknown jp-card-invalid">
+                                <input placeholder="Name on card" type="text" name="name" class="mt-2 form-control jp-card-valid">
+                                <input placeholder="MM/YY" type="tel" name="expiry" class="mt-2 form-control">
+                                <input placeholder="CVC" type="number" name="cvc" class="mt-2 form-control">
+                            </div>
+                            <button type="submit" class="btn btn-success">Add Card</button>
+                        </form>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+ 
+<script type="text/javascript">
+  // jQuery
+  $('form').card({
+    container: '.card-wrapper'
+  });
+
+  // Vanilla JavaScript
+  new Card({
+    form: document.querySelector('form'),
+    container: '.card-wrapper'
+  });
+</script>
+
+
+{% endblock %}

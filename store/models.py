@@ -77,7 +77,7 @@ class Review(models.Model):
 
 class Address(models.Model):
     name = models.CharField(max_length=100, default="Default Address")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     address = models.CharField(max_length=400)
     region = models.ForeignKey(Region, on_delete=models.RESTRICT, verbose_name="City")
     subregion = models.ForeignKey(SubRegion, on_delete=models.RESTRICT, verbose_name="Province", null=True)

@@ -65,6 +65,19 @@ class ProductView(View):
         except ObjectDoesNotExist:
             user_review = None
 
+        purchased = True
+        user_orders = Order.objects.filter(user=request.user, ordered=True)
+        if user_orders == None:
+            purchased = False
+        else:
+            for o in user_orders:
+                try:
+                    purchased_product = o.items.get(item=product)
+                    purchased = True 
+                    break              
+                except ObjectDoesNotExist:
+                    purchased = False
+
         rating_percentages = []
         for i in range(5,0,-1):
             # rating_percentages.append(str(reviews.filter(rating=i).count()/review_count * 100) + "%")
@@ -86,6 +99,7 @@ class ProductView(View):
             'user_review': user_review,
             'page_count': paginator.num_pages,
             'best_rated': best_rated,
+            'purchased': purchased,
         }
         return render(request, 'product.html', context)
 
@@ -194,17 +208,6 @@ class CartView(LoginRequiredMixin, View):
             return redirect('cart')
 
 
-
-
-class AddressesView(LoginRequiredMixin, View):
-    def get(self,request):
-        user = request.user
-        addresses = Address.objects.filter(user=user)
-        context = {
-            'addresses': addresses
-        }
-        return render(request, 'addresses.html', context)
-
 class AddAddressView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -213,6 +216,7 @@ class AddAddressView(LoginRequiredMixin, View):
             address = form.save(commit=False)
             address.user = user
             address.save()
+            messages.success(request, "Successfully added address.")
             return redirect('my_account')
         return render(request, 'add_address.html', {'form': form , 'user': user})
 
@@ -224,7 +228,10 @@ class AddAddressView(LoginRequiredMixin, View):
 class DeleteAddressView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
-        Address.objects.filter(id=id).delete()
+        address = Address.objects.get(id=id)
+        address.user = None
+        address.save()
+        messages.success(request, "Successfully deleted address.")
         return redirect('my_account')
 
 class LoadSubregionsView(LoginRequiredMixin, View):
@@ -442,7 +449,22 @@ class BalanceView(LoginRequiredMixin, View):
         }
         return render(request, 'wallet.html', context)
 
+class AddCardView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = CardForm()
+        return render(request, 'addcard.html', {'form' : form})
 
 
+    def post(self, request):
+        form = CardForm(request.POST)
+        if form.is_valid():
+            card = form.save(commit=False)
+            card.user = request.user
+            card.save()
+            messages.success(request, 'Card successfully added.')
+            return redirect('my_account')
+        messages.error(request, 'Invalid Card')
+        return render(request, 'addcard.html', {'form' : form})
+        
 
 # Create your views here.

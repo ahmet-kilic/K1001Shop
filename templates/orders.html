@@ -32,7 +32,7 @@
                     </div>
                     <hr>
                     <h5><strong> Order Address: </h5></strong>
-                    <h5>{{ item.shipping_address }}</h5>
+                    <h5>{{ item.shipping_address.address }}, {{ item.shipping_address.region.name }} / {{ item.shipping_address.subregion.name }}</h5>
                     <hr>
                     <table class="table table-sm table-borderless">
                         <tbody>

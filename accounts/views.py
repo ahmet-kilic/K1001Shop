@@ -85,3 +85,9 @@ class AccountView(LoginRequiredMixin, View):
         }
         return render(request, 'my_account.html', context)
 
+    def post(self, request):
+        card_id = request.POST.get('radio-button')
+        Card.objects.get(id=card_id).delete()
+        messages.success(request, 'Successfully deleted card.')
+        return redirect('my_account')
+

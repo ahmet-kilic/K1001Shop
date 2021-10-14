@@ -10,7 +10,8 @@
 
 
   <!-- New Profile page -->
-  
+<body class="grey lighten-3">
+
 <div class="container">
 	<div class="row">
 		<div class="col-md-3">
@@ -56,6 +57,7 @@
                             </table>
                             <hr>
                                   <a href="{% url 'change_settings' %}" class="btn btn-primary">Change Settings</a>
+                                  <a href="{% url 'password_change' %}" class="btn btn-secondary">Change Password</a>
 
 
                             </div>
@@ -75,19 +77,23 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
+                              {% if addresses %}
                               <table class="table table-sm table-borderless">
-                              <tbody>
-                                {% for a in addresses %}
-                                <tr>
-                                  <td><h5> {{ a.name }} </h5> <h6> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} </h6></td>
-                                  <td><h5><a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">
-                                  <i class="fas fa-trash" class="align-middle"></i>
-                                  </a></h5> 
-                                  </td>
-                                </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
+                                <tbody>
+                                  {% for a in addresses %}
+                                  <tr>
+                                    <td><h5> {{ a.name }} </h5> <h6> {{ a.address }}, {{ a.region.name }} / {{ a.subregion.name }} </h6></td>
+                                    <td><h5><a href="{% url 'delete_address' a.id %}" class="nav-link waves-effect align-middle">
+                                    <i class="fas fa-trash" class="align-middle"></i>
+                                    </a></h5> 
+                                    </td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              {% else %}
+                              <div> You do not have any saved addresses. </div>
+                              {% endif %}
                             <hr>
                             <a href="{% url 'add_address' %}" class="btn btn-primary">Add a Shipping Address</a>
 
@@ -104,13 +110,15 @@
                       <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <h4>Your Addresses</h4>
+                                <h4>Your Cards</h4>
                                 <hr>
                             </div>
                         </div>
                       {% if cards %}
                         <div class="frb-group">
-                    
+
+                          <form method="POST" novalidate>
+                          {% csrf_token %}
                           {% for card in cards %}
                           <div class="frb frb-primary">
                             <input type="radio" id="radio-button-{{card.pk}}" name="radio-button" value="{{card.pk}}">
@@ -122,14 +130,18 @@
                             </label>
                           </div>
                           {% endfor %}
+                            <hr>
+                            <button class="btn btn-secondary" name="deletecard" type="submit">Delete Selected Card</button>
+                            <a href="{% url 'addcard' %}" class="btn btn-primary">Add a New Card</a>
+                          </form>
                           
                           
                         </div>
-                        <hr>
-                        <button class="btn btn-secondary" name="deletecard" type="submit">Delete Selected Card</button>
-                        <a href="#" class="btn btn-primary">Add a New Card</a>
+                        
                         {% else %}
                         <div> You do not have any saved cards.</div>
+                        <hr>
+                        <a href="{% url 'addcard' %}" class="btn btn-primary">Add a New Card</a>
                         {% endif %}                  
                       </div>
 
@@ -143,6 +155,7 @@
     </div>
 </div>
 </div>
+</body>
 
   <script>
     $('a[data-toggle="tab"]').click(function (e) {

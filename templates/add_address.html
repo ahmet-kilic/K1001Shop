@@ -4,17 +4,28 @@
 
 {% block content %}
 {% include 'includes/navbar.html' %}
-  <div class="row">
-    <div class="col-lg-6 col-md-8 col-sm-10">
-        <ul class="mr-auto">
-            <form method="post" id="addressForm" novalidate data-subregions-url="{% url 'ajax_load_subregions' %}">
-                    {% csrf_token %}
-                    {% include 'includes/form.html' %}
-                <button type="submit" class="btn btn-success">Add</button>
-            </form>
-        </ul>
+<body class="grey lighten-3">
+    <div class="card w-50 mx-auto">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 w-25 mx-auto">
+                    <h4>Add a New Address</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 w-25">
+                    <form method="post" id="addressForm" novalidate data-subregions-url="{% url 'ajax_load_subregions' %}">
+                            {% csrf_token %}
+                            {% include 'includes/form.html' %}
+                        <button type="submit" class="btn btn-success">Add</button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
     </div>
-  </div>
+</body>
 
   <script>
       $("#id_region").change(function () {
@@ -50,10 +61,8 @@
     $(document).ready(function()
     {
         $('#id_region').select2({
-            width: "704"
         });
         $('#id_subregion').select2({
-            width: "704"
         });
     });
   </script>

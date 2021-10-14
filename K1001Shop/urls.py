@@ -13,12 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, reverse_lazy
 from store import views
 
 from django.contrib import admin
-from django.urls import path
 
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
@@ -51,13 +49,12 @@ urlpatterns = [
     path('reset/complete/',
         auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
         name='password_reset_complete'),
-    path('settings/password/', auth_views.PasswordChangeView.as_view(template_name='password_change.html'),
+    path('settings/password/', auth_views.PasswordChangeView.as_view(template_name='password_change.html',success_url=reverse_lazy('my_account')),
         name='password_change'),
-    path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'),
+    path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(),
         name='password_change_done'),
     path('settings/account/', accounts_views.AccountView.as_view(), name='my_account'),
     path('settings/account/change/', accounts_views.SettingsChangeView.as_view(), name='change_settings'),
-    path('addresses/', views.AddressesView.as_view(), name='addresses'),
     path('addresses/add', views.AddAddressView.as_view(), name='add_address'),
     path('addresses/remove/<int:id>/', views.DeleteAddressView.as_view(), name='delete_address'),
     path('ajax/load-subregions/', views.LoadSubregionsView.as_view() , name='ajax_load_subregions'),
@@ -67,6 +64,7 @@ urlpatterns = [
     path('orders/', views.OrdersView.as_view(), name='orders'),
     path('orders/refund/<int:pk>/', views.RefundView.as_view(), name='refund'),
     path('wallet/', views.BalanceView.as_view(), name='wallet'),
+    path('cards/add/', views.AddCardView.as_view(), name='addcard'),
     path('<slug:slug>/', views.HomeView.as_view(), name='category_home' ), # Problem in here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -222,52 +222,56 @@
             </div>
             <div class="col-sm-6">
               {% if user.is_authenticated %}
-                {% if user_review %}
+                {% if purchased %}
+                  {% if user_review %}
 
-                  <div>
                     <div>
-                      <h5> Your Review: </h5>
-                      <hr>
-                      <a><i class="far fa-clock"></i> {{ user_review.updated_at|naturaltime }}</a>
-                      <div class="float-right jq-1class" data-score="{{ user_review.rating }}">
+                      <div>
+                        <h5> Your Review: </h5>
+                        <hr>
+                        <a><i class="far fa-clock"></i> {{ user_review.updated_at|naturaltime }}</a>
+                        <div class="float-right jq-1class" data-score="{{ user_review.rating }}">
+                        </div>
                       </div>
+                      </div>
+                      <div class="mt-2">
+                      <h5 class="font-weight-bold"> {{ user_review.subject }} </h5>
+                      {{ user_review.comment| safe }}
                     </div>
+                    <hr>
+                    <h4 class="text-uppercase">Update Your Review</h4>
+                  {% else %}
+                    <h4 class="text-uppercase">Write Your Review</h4>
+                  {% endif %}
+                  <form id="review_form" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <input maxlength="40" class="input form-control" name="subject" placeholder="Subject" />
                     </div>
-                    <div class="mt-2">
-                    <h5 class="font-weight-bold"> {{ user_review.subject }} </h5>
-                    {{ user_review.comment| safe }}
-                  </div>
-                  <hr>
-                  <h4 class="text-uppercase">Update Your Review</h4>
+                    <div class="form-group" id="review_div">
+                      <textarea maxlength="400" id="review_text" class="input form-control" name="comment" style="height: 120px;" placeholder="Your review"></textarea>
+                    </div>
+                    <div>
+                      <strong class="text-uppercase">Your Rating: </strong>
+                    </div>
+                    <div class="form-group">    
+
+                        <div class="stars">
+                          <input class="star star-5" id="star-5" type="radio" name="rating" value="5" required> <label class="star star-5" for="star-5"></label> 
+                          <input class="star star-4" id="star-4" type="radio" name="rating" value="4" checked required> <label class="star star-4" for="star-4"></label> 
+                          <input class="star star-3" id="star-3" type="radio" name="rating" value="3" required> <label class="star star-3" for="star-3"></label> 
+                          <input class="star star-2" id="star-2" type="radio" name="rating" value="2" required> <label class="star star-2" for="star-2"></label>                       
+                          <input class="star star-1" id="star-1" type="radio" name="rating" value="1" required> <label class="star star-1" for="star-1"></label>
+                        </div>
+
+                    </div>
+                    <div>
+                      <button name="submit-review" class="btn btn-primary d-flex justify-content-start">Submit</button>
+                    </div>
+                  </form>
                 {% else %}
-                  <h4 class="text-uppercase">Write Your Review</h4>
+                <div> Please purchase this product to write a review. </div>
                 {% endif %}
-                <form id="review_form" method="post" novalidate>
-                  {% csrf_token %}
-                  <div class="form-group">
-                    <input maxlength="40" class="input form-control" name="subject" placeholder="Subject" />
-                  </div>
-                  <div class="form-group" id="review_div">
-                    <textarea maxlength="400" id="review_text" class="input form-control" name="comment" style="height: 120px;" placeholder="Your review"></textarea>
-                  </div>
-                  <div>
-                    <strong class="text-uppercase">Your Rating: </strong>
-                  </div>
-                  <div class="form-group">    
-
-                      <div class="stars">
-                        <input class="star star-5" id="star-5" type="radio" name="rating" value="5" required> <label class="star star-5" for="star-5"></label> 
-                        <input class="star star-4" id="star-4" type="radio" name="rating" value="4" checked required> <label class="star star-4" for="star-4"></label> 
-                        <input class="star star-3" id="star-3" type="radio" name="rating" value="3" required> <label class="star star-3" for="star-3"></label> 
-                        <input class="star star-2" id="star-2" type="radio" name="rating" value="2" required> <label class="star star-2" for="star-2"></label>                       
-                        <input class="star star-1" id="star-1" type="radio" name="rating" value="1" required> <label class="star star-1" for="star-1"></label>
-                      </div>
-
-                  </div>
-                  <div>
-                    <button name="submit-review" class="btn btn-primary d-flex justify-content-start">Submit</button>
-                  </div>
-                </form>
               {% else %}
                   <div>
                     Please <a href="{% url 'login' %}">log in</a> to write a review.
