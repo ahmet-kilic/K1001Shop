@@ -10,12 +10,10 @@ from django.utils import timezone
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
-    ordering = models.IntegerField(default=1, verbose_name="Category Ordering")
 
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
-        ordering = ("ordering",)
 
     def __str__(self):
         return self.title

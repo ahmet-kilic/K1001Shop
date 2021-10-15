@@ -27,12 +27,14 @@ def get_associated(product):
     te_ary = te.fit(dataset).transform(dataset)
     df = pd.DataFrame(te_ary, columns=te.columns_)
 
-    # Apply apriori algorithm and apply association rules
+    # Apply apriori algorithm and find frequent item sets
     rule_sets = apriori(df, min_support=0.1, use_colnames=True)
+    # Apply rules and find associations.
     rules = association_rules(rule_sets, metric="lift", min_threshold=1)
-
     # Filtering results..
     rules = rules[ (rules['lift'] >= 0.9) & (rules['antecedents'] == frozenset({product}))]
+    print(rules)
+
     rules = rules.sort_values(by=['support'], ascending=False)
     rules = rules[ rules['consequents'].apply(lambda x: len(x) == 1 ) ]['consequents'][0:4]
 

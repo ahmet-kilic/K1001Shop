@@ -89,7 +89,6 @@ class ProductView(View):
 
         reviews = reviews.exclude(comment='').order_by('-updated_at')
 
-        
         paginator = Paginator(reviews, 3)
 
         # Filter only get with more than 10 reviews but for this project not needed.
@@ -233,8 +232,11 @@ class DeleteAddressView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
         address = Address.objects.get(id=id)
-        address.user = None
-        address.save()
+        if Order.objects.filter(shipping_address=address):
+            address.user = None
+            address.save()
+        else:
+            address.delete()
         messages.success(request, "Successfully deleted address.")
         return redirect('my_account')
 
