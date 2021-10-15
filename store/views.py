@@ -416,10 +416,6 @@ class BalanceView(LoginRequiredMixin, View):
         if 'newcard' in request.POST:
             form = CardForm(request.POST)
             if form.is_valid():
-                if 'save' in request.POST:
-                    card = form.save(commit=False)
-                    card.user = request.user
-                    card.save()
                 valid = True
             else:
                 messages.error(request, "Invalid card")
@@ -441,6 +437,11 @@ class BalanceView(LoginRequiredMixin, View):
         if balance_form.is_valid() and valid:
             wallet.balance += balance_form.cleaned_data['amount']
             wallet.balance = decimal.Decimal(str(round(float(wallet.balance),2)))
+
+            if 'newcard' and 'save' in request.POST:
+                    card = form.save(commit=False)
+                    card.user = request.user
+                    card.save()
 
             wallet.save()
             self.request.session['balance'] = str(wallet.balance)

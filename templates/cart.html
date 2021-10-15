@@ -28,7 +28,7 @@
                     </strong>
                     </h4>
                     <a href="{{ order_item.item.get_absolute_url }}">
-                    <img class="rounded" style="width: 150px; height: 150px" href="{{ order_item.item.get_absolute_url }}" src="{{ order_item.item.image.url }}" class="card-img-top">                    
+                    <img class="rounded" style="max-width: 150px; max-height: 150px" href="{{ order_item.item.get_absolute_url }}" src="{{ order_item.item.image.url }}" class="card-img-top">                    
                     </a>
                     <p class="lead">
                         {% if order_item.item.discount_price %}
